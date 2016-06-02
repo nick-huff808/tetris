@@ -17,13 +17,24 @@ namespace TetrisProject
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// the board is 10x18
+    /// where each square is 20x 20 pixels 
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DispatcherTimer dispatcherTimer;
         public MainWindow()
         {
             InitializeComponent();
+            dispatcherTimer.Tick += new EventHandler(timerTick);
+            
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
         }
+    }
+
+    private void timerTick(object sender, EventArgs e)
+    {
+
     }
 
     public class Block
