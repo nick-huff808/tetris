@@ -1,0 +1,14 @@
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\bin\Debug\TetrisProject.exe.config
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\bin\Debug\TetrisProject.exe
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\bin\Debug\TetrisProject.pdb
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.csprojResolveAssemblyReference.cache
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\MainWindow.g.cs
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\App.g.cs
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject_MarkupCompile.cache
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject_MarkupCompile.lref
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\MainWindow.baml
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.g.resources
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.Properties.Resources.resources
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.csproj.GenerateResource.Cache
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.exe
+D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.pdb
