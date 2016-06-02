@@ -28,7 +28,7 @@ namespace TetrisProject
             InitializeComponent();
             //dispatcherTimer.Tick += new EventHandler(timerTick);
             
-            //dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            //dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
         }
 
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -361,7 +361,7 @@ namespace TetrisProject
     public class GameBoard
     {
         int level;
-        int[][] field;
+        int[,] field;
         int score;
         int lines;
         Block next;
@@ -433,6 +433,66 @@ namespace TetrisProject
         }
         #endregion
 
+        public GameBoard()
+        {
+            field = new int[18,10];
+            level = 1;
+            score = lines = 0;
 
+        }
+        public Color colorPick(int i)
+        {
+            if(i == 1)
+            {
+                return Colors.Blue;
+            }
+            else if (i == 2)
+            {
+                return Colors.Red;
+            }
+            else if (i == 3)
+            {
+                return Colors.Green;
+            }
+            else if (i == 4)
+            {
+                return Colors.Yellow;
+            }
+            else if (i == 5)
+            {
+                return Colors.Purple;
+            }
+            else if (i == 6)
+            {
+                return Colors.Black;
+            }
+            else if (i == 7)
+            {
+                return Colors.DarkGreen;
+            }
+            else
+                return Color.FromRgb(116, 61, 61);
+        }
+        public void drawBoard()
+        {
+            for(int y = 0; y < 18; y++)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    Color color = colorPick(field[y, x]);
+
+                    //Taken from a stack overflow forum
+                    Rectangle square = new Rectangle();
+                    square.Stroke = new SolidColorBrush(Colors.White);
+                    square.StrokeThickness = 2;
+                    square.Fill = new SolidColorBrush(color);
+                    square.Width = 20;
+                    square.Height = 20;
+                    Canvas.SetLeft(square, x*20);
+                    Canvas.SetTop(square, y*20);
+
+                }
+            }
+        }
     }
 }
