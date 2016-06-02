@@ -12,3 +12,6 @@ D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProj
 D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.csproj.GenerateResource.Cache
 D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.exe
 D:\documents\Visual Studio 2015\TetrisProject\TetrisProject\obj\Debug\TetrisProject.pdb
+D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetris\TetrisProject\bin\Debug\TetrisProject.exe.config
+D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetris\TetrisProject\obj\Debug\TetrisProject.exe
+D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetris\TetrisProject\obj\Debug\TetrisProject.pdb

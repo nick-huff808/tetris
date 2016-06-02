@@ -73,9 +73,19 @@ namespace TetrisProject
             }
         }
         #endregion
-
+        /*
+         * 1 == l
+         * 2 == backwards L
+         * 3 ==  L
+         * 4 == S
+         * 5 == Z
+         * 6 == square
+         * 7 == t 
+         */
         public Block(int i)
         {
+
+
             id = i;
             pos = 0;
             if (i == 1)
@@ -98,14 +108,14 @@ namespace TetrisProject
             {
                 color = Colors.Green;
                 shape = new int[][] { new int[] { 3, 3, 3, 3 },
-                                      new int[] { 0, 0, 0, 3 },
+                                      new int[] { 3, 0, 0, 0 },
                                       new int[] { 0, 0, 0, 0 },
                                       new int[] { 0, 0, 0, 0 }};
             }
             else if (i == 4)
             {
                 color = Colors.Yellow;
-                shape = new int[][] { new int[] { 0, 0, 4, 4 },
+                shape = new int[][] { new int[] { 0, 4, 4, 0 },
                                       new int[] { 4, 4, 0, 0 },
                                       new int[] { 0 ,0 ,0 ,0 },
                                       new int[] { 0 ,0 ,0 ,0 }};
@@ -114,7 +124,7 @@ namespace TetrisProject
             {
                 color = Colors.Purple;
                 shape = new int[][] { new int[] { 5, 5, 0, 0 },
-                                      new int[] { 0, 0, 5, 5 },
+                                      new int[] { 0, 5, 5, 0 },
                                       new int[] { 0 ,0 ,0 ,0 },
                                       new int[] { 0 ,0 ,0 ,0 }};
 
@@ -167,10 +177,11 @@ namespace TetrisProject
                 }
                 else
                 {
-                    shape = new int[][] { new int[] { 0,0,0,0},
-                                      new int[] { 0,0,0,0},
-                                      new int[] { 0,0,0,0},
-                                      new int[] { 1,1,1,1}};
+                    shape = new int[][] { new int[] { 1,1,1,1},
+                                          new int[] { 0,0,0,0},
+                                          new int[] { 0,0,0,0},
+                                          new int[] { 0,0,0,0} }
+                                          ;
                 }
             }
             //if backwards L
@@ -200,64 +211,119 @@ namespace TetrisProject
                 }
                 else
                 {
-                    shape = new int[][] { new int[] { 0, 0, 0, 2 },
-                                          new int[] { 0, 0, 0, 2 },
-                                          new int[] { 0, 0, 0, 2},
-                                          new int[] { 0, 0, 2, 2}};
+                    shape = new int[][] { new int[] { 0, 2, 0, 0 },
+                                          new int[] { 0, 2, 0, 0 },
+                                          new int[] { 0, 2, 0, 0},
+                                          new int[] { 2, 2, 0, 0}};
                 }
             }
             //if regular L
-            if(id ==3)
-            {
-                if (pos == 0 || pos == 2)
-                {
-                    shape = new int[][] { new int[] { 1,0,0,0},
-                                          new int[] { 1,0,0,0},
-                                          new int[] { 1,0,0,0},
-                                          new int[] { 1,0,0,0}};
-                }
-                else
-                {
-                    shape = new int[][] { new int[] { 0,0,0,0},
-                                      new int[] { 0,0,0,0},
-                                      new int[] { 0,0,0,0},
-                                      new int[] { 1,1,1,1}};
-                }
-            }
-            //if backwards L
-            else if (id == 2)
+            else if (id == 3)
             {
                 if (pos == 0)
                 {
                     shape = new int[][] { new int[] { 3, 3, 3, 3 },
-                                          new int[] { 0, 0, 0, 3},
+                                          new int[] { 3, 0, 0, 0 },
                                           new int[] { 0, 0, 0, 0},
                                           new int[] { 0, 0, 0, 0}};
                 }
                 else if (pos == 1)
                 {
-                    shape = new int[][] { new int[] { 0, 0, 3, 3 },
-                                          new int[] { 0, 0, 0, 3 },
-                                          new int[] { 0, 0, 0, 3},
-                                          new int[] { 0, 0, 0, 3}};
+                    shape = new int[][] { new int[] { 3, 0, 0, 0 },
+                                          new int[] { 3, 0, 0, 0 },
+                                          new int[] { 3, 0, 0, 0},
+                                          new int[] { 3, 3, 0, 0}};
                 }
                 else if (pos == 2)
                 {
-                    shape = new int[][] { new int[] { 2, 2, 2, 2 },
-                                          new int[] { 0, 0, 0, 2 },
+                    shape = new int[][] { new int[] { 0, 0, 0, 3 },
+                                          new int[] { 3, 3, 3, 3 },
                                           new int[] { 0, 0, 0, 0},
                                           new int[] { 0, 0, 0, 0}};
 
                 }
                 else
                 {
-                    shape = new int[][] { new int[] { 0, 0, 0, 2 },
-                                          new int[] { 0, 0, 0, 2 },
-                                          new int[] { 0, 0, 0, 2},
-                                          new int[] { 0, 0, 2, 2}};
+                    shape = new int[][] { new int[] { 3, 3, 0, 0 },
+                                          new int[] { 0, 3, 0, 0 },
+                                          new int[] { 0, 3, 0, 0},
+                                          new int[] { 0, 3, 0, 0}};
                 }
             }
+            //S
+            else if (id == 4)
+            {
+                if (pos == 0 || pos == 2)
+                {
+                    shape = new int[][] { new int[] { 0, 4, 4, 0 },
+                                          new int[] { 4, 4, 0, 0 },
+                                          new int[] { 0 ,0 ,0 ,0 },
+                                          new int[] { 0 ,0 ,0 ,0 }};
+                }
+                else
+                {
+                    shape = new int[][] { new int[] { 4, 0, 0, 0 },
+                                          new int[] { 4, 4, 0, 0 },
+                                          new int[] { 0, 4, 0, 0 },
+                                          new int[] { 0, 0, 0, 0 }};
+                }
 
+            }
+            //Z
+            else if (id == 5)
+            {
+                if (pos == 0 || pos == 2)
+                {
+                    shape = new int[][] { new int[] { 5, 5, 0, 0 },
+                                          new int[] { 0, 5, 5, 0 },
+                                          new int[] { 0 ,0 ,0 ,0 },
+                                          new int[] { 0 ,0 ,0 ,0 }};
+                }
+                else
+                {
+                    shape = new int[][] { new int[] { 0, 5, 0, 0 },
+                                          new int[] { 5, 5, 0, 0 },
+                                          new int[] { 5, 0, 0, 0 },
+                                          new int[] { 0, 0, 0, 0 }};
+                }
+
+            }
+            //Square
+            else if (id == 6)
+                return;
+            //T
+            else if (id == 7)
+            {
+                if (pos == 0)
+                {
+                    shape = new int[][] { new int[] { 7, 7, 7, 0 },
+                                          new int[] { 0, 7, 0, 0 },
+                                          new int[] { 0, 0, 0, 0},
+                                          new int[] { 0, 0, 0, 0}};
+                }
+                else if (pos == 1)
+                {
+                    shape = new int[][] { new int[] { 7, 0, 0, 0 },
+                                          new int[] { 7, 7, 0, 0 },
+                                          new int[] { 7, 0, 0, 0},
+                                          new int[] { 0, 0, 0, 0}};
+                }
+                else if (pos == 2)
+                {
+                    shape = new int[][] { new int[] { 0, 7, 0, 0 },
+                                          new int[] { 7, 7, 7,  },
+                                          new int[] { 0, 0, 0, 0},
+                                          new int[] { 0, 0, 0, 0}};
+
+                }
+                else
+                {
+                    shape = new int[][] { new int[] { 0, 7, 0, 0 },
+                                          new int[] { 7, 7, 0, 0 },
+                                          new int[] { 0, 7, 0, 0 },
+                                          new int[] { 0, 0, 0, 0 }};
+                }
+            }
 
         }
     }
