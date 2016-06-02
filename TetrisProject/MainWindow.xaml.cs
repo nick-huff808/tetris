@@ -22,20 +22,30 @@ namespace TetrisProject
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DispatcherTimer dispatcherTimer;
+        //private DispatcherTimer dispatcherTimer;
         public MainWindow()
         {
             InitializeComponent();
-            dispatcherTimer.Tick += new EventHandler(timerTick);
+            //dispatcherTimer.Tick += new EventHandler(timerTick);
             
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            //dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+        }
+
+        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void textBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 
-    private void timerTick(object sender, EventArgs e)
+    /*private void timerTick(object sender, EventArgs e)
     {
 
-    }
+    }*/
 
     public class Block
     {
@@ -158,6 +168,15 @@ namespace TetrisProject
             }
 
 
+        }
+
+        private int[][] chooseBlock()
+        {
+            Random rand = new Random();
+            int num = rand.Next(1, 8);
+
+            Block currentBlock = new Block(num);
+            return currentBlock.Shape;
         }
 
 
@@ -338,8 +357,6 @@ namespace TetrisProject
 
         }
     }
-
-
 
     public class GameBoard
     {
