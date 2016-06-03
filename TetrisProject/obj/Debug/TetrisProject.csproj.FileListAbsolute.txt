@@ -28,3 +28,4 @@ C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\MainWindow.baml
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.g.resources
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.Properties.Resources.resources
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.csproj.GenerateResource.Cache
+C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.csprojResolveAssemblyReference.cache

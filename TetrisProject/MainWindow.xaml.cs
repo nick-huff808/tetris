@@ -25,18 +25,29 @@ namespace TetrisProject
     {
         private DispatcherTimer dispatcherTimer = new DispatcherTimer();
         private bool paused = true;
+        GameBoard board = new GameBoard();
+
         public MainWindow()
         {
-            InitializeComponent();
-            GameBoard board = new GameBoard();
-            board.drawBoard(play_area);
+            InitializeComponent();          
+            board.drawField(play_area);
             dispatcherTimer.Tick += new EventHandler(timerTick);
             
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            dispatcherTimer.Start();
         }
         private void timerTick(object sender, EventArgs e)
         {
-
+            if(board.CurrBlock.Y == 14)
+            {
+                board.chooseBlock();
+            }
+            else
+            {
+                board.CurrBlock.Y++;
+                board.moveBlock();
+            }
+            board.drawField(play_area);
         }
 
         private void pause_button_Click(object sender, RoutedEventArgs e)
@@ -56,326 +67,15 @@ namespace TetrisProject
 
         }
     }
-
-
-    public class Block
-    {
-        Color color;
-        int[][] shape;
-        int id;
-        int pos;
-        #region properties
-
-        public Color Color
-        {
-            get
-            {
-                return color;
-            }
-
-            set
-            {
-                color = value;
-            }
-        }
-
-        public int[][] Shape
-        {
-            get
-            {
-                return shape;
-            }
-
-            set
-            {
-                shape = value;
-            }
-        }
-
-        public int Pos
-        {
-            get
-            {
-                return pos;
-            }
-
-            set
-            {
-                pos = value;
-            }
-        }
-        #endregion
-        /*
-         * 1 == l
-         * 2 == backwards L
-         * 3 ==  L
-         * 4 == S
-         * 5 == Z
-         * 6 == square
-         * 7 == t 
-         */
-        public Block(int i)
-        {
-
-
-            id = i;
-            pos = 0;
-            if (i == 1)
-            {
-                color = Colors.Blue;
-                shape = new int[][] { new int[] { 0,0,0,0},
-                                      new int[] { 0,0,0,0},
-                                      new int[] { 1,1,1,1},
-                                      new int[] { 0,0,0,0}};
-            }
-            else if (i == 2)
-            {
-                color = Colors.Red;
-                shape = new int[][] { new int[] { 2, 0, 0, 0 },
-                                      new int[] { 2, 2, 2, 2 },
-                                      new int[] { 0, 0, 0, 0},
-                                      new int[] { 0, 0, 0, 0}};
-            }
-            else if (i == 3)
-            {
-                color = Colors.Green;
-                shape = new int[][] { new int[] { 3, 3, 3, 3 },
-                                      new int[] { 3, 0, 0, 0 },
-                                      new int[] { 0, 0, 0, 0 },
-                                      new int[] { 0, 0, 0, 0 }};
-            }
-            else if (i == 4)
-            {
-                color = Colors.Yellow;
-                shape = new int[][] { new int[] { 0, 4, 4, 0 },
-                                      new int[] { 4, 4, 0, 0 },
-                                      new int[] { 0 ,0 ,0 ,0 },
-                                      new int[] { 0 ,0 ,0 ,0 }};
-            }
-            else if (i == 5)
-            {
-                color = Colors.Purple;
-                shape = new int[][] { new int[] { 5, 5, 0, 0 },
-                                      new int[] { 0, 5, 5, 0 },
-                                      new int[] { 0 ,0 ,0 ,0 },
-                                      new int[] { 0 ,0 ,0 ,0 }};
-
-            }
-            else if (i == 6)
-            {
-                color = Colors.Black;
-                shape = new int[][] { new int[] { 0, 0, 6, 6 },
-                                      new int[] { 0, 0, 6, 6 },
-                                      new int[] { 0 ,0 ,0 ,0 },
-                                      new int[] { 0 ,0 ,0 ,0 }};
-            }
-            else if (i == 7)
-            {
-                color = Colors.DarkGreen;
-                shape = new int[][] { new int[] { 7, 7, 7, 0 },
-                                      new int[] { 0, 7, 0, 0 },
-                                      new int[] { 0 ,0 ,0 ,0 },
-                                      new int[] { 0 ,0 ,0 ,0 }};
-            }
-
-
-        }
-
-        private int[][] chooseBlock()
-        {
-            Random rand = new Random();
-            int num = rand.Next(1, 8);
-
-            Block currentBlock = new Block(num);
-            return currentBlock.Shape;
-        }
-
-
-        private void Rotate(int i)
-        {
-            if (i == 1)
-            {
-                pos++;
-                pos += pos % 4;
-            }
-            else
-            {
-                if (pos == 0)
-                    pos = 3;
-                else
-                    pos--;
-            }
-
-            //if a line
-            if (id == 1)
-            {
-                if (pos == 0 || pos == 2)
-                {
-                    shape = new int[][] { new int[] { 1,0,0,0},
-                                          new int[] { 1,0,0,0},
-                                          new int[] { 1,0,0,0},
-                                          new int[] { 1,0,0,0}};
-                }
-                else
-                {
-                    shape = new int[][] { new int[] { 1,1,1,1},
-                                          new int[] { 0,0,0,0},
-                                          new int[] { 0,0,0,0},
-                                          new int[] { 0,0,0,0} }
-                                          ;
-                }
-            }
-            //if backwards L
-            else if (id == 2)
-            {
-                if (pos == 0)
-                {
-                    shape = new int[][] { new int[] { 2, 0, 0, 0 },
-                                          new int[] { 2, 2, 2, 2 },
-                                          new int[] { 0, 0, 0, 0},
-                                          new int[] { 0, 0, 0, 0}};
-                }
-                else if (pos == 1)
-                {
-                    shape = new int[][] { new int[] { 2, 2, 0, 0 },
-                                          new int[] { 2, 0, 0, 0 },
-                                          new int[] { 2, 0, 0, 0},
-                                          new int[] { 2, 0, 0, 0}};
-                }
-                else if (pos == 2)
-                {
-                    shape = new int[][] { new int[] { 2, 2, 2, 2 },
-                                          new int[] { 0, 0, 0, 2 },
-                                          new int[] { 0, 0, 0, 0},
-                                          new int[] { 0, 0, 0, 0}};
-
-                }
-                else
-                {
-                    shape = new int[][] { new int[] { 0, 2, 0, 0 },
-                                          new int[] { 0, 2, 0, 0 },
-                                          new int[] { 0, 2, 0, 0},
-                                          new int[] { 2, 2, 0, 0}};
-                }
-            }
-            //if regular L
-            else if (id == 3)
-            {
-                if (pos == 0)
-                {
-                    shape = new int[][] { new int[] { 3, 3, 3, 3 },
-                                          new int[] { 3, 0, 0, 0 },
-                                          new int[] { 0, 0, 0, 0},
-                                          new int[] { 0, 0, 0, 0}};
-                }
-                else if (pos == 1)
-                {
-                    shape = new int[][] { new int[] { 3, 0, 0, 0 },
-                                          new int[] { 3, 0, 0, 0 },
-                                          new int[] { 3, 0, 0, 0},
-                                          new int[] { 3, 3, 0, 0}};
-                }
-                else if (pos == 2)
-                {
-                    shape = new int[][] { new int[] { 0, 0, 0, 3 },
-                                          new int[] { 3, 3, 3, 3 },
-                                          new int[] { 0, 0, 0, 0},
-                                          new int[] { 0, 0, 0, 0}};
-
-                }
-                else
-                {
-                    shape = new int[][] { new int[] { 3, 3, 0, 0 },
-                                          new int[] { 0, 3, 0, 0 },
-                                          new int[] { 0, 3, 0, 0},
-                                          new int[] { 0, 3, 0, 0}};
-                }
-            }
-            //S
-            else if (id == 4)
-            {
-                if (pos == 0 || pos == 2)
-                {
-                    shape = new int[][] { new int[] { 0, 4, 4, 0 },
-                                          new int[] { 4, 4, 0, 0 },
-                                          new int[] { 0 ,0 ,0 ,0 },
-                                          new int[] { 0 ,0 ,0 ,0 }};
-                }
-                else
-                {
-                    shape = new int[][] { new int[] { 4, 0, 0, 0 },
-                                          new int[] { 4, 4, 0, 0 },
-                                          new int[] { 0, 4, 0, 0 },
-                                          new int[] { 0, 0, 0, 0 }};
-                }
-
-            }
-            //Z
-            else if (id == 5)
-            {
-                if (pos == 0 || pos == 2)
-                {
-                    shape = new int[][] { new int[] { 5, 5, 0, 0 },
-                                          new int[] { 0, 5, 5, 0 },
-                                          new int[] { 0 ,0 ,0 ,0 },
-                                          new int[] { 0 ,0 ,0 ,0 }};
-                }
-                else
-                {
-                    shape = new int[][] { new int[] { 0, 5, 0, 0 },
-                                          new int[] { 5, 5, 0, 0 },
-                                          new int[] { 5, 0, 0, 0 },
-                                          new int[] { 0, 0, 0, 0 }};
-                }
-
-            }
-            //Square
-            else if (id == 6)
-                return;
-            //T
-            else if (id == 7)
-            {
-                if (pos == 0)
-                {
-                    shape = new int[][] { new int[] { 7, 7, 7, 0 },
-                                          new int[] { 0, 7, 0, 0 },
-                                          new int[] { 0, 0, 0, 0},
-                                          new int[] { 0, 0, 0, 0}};
-                }
-                else if (pos == 1)
-                {
-                    shape = new int[][] { new int[] { 7, 0, 0, 0 },
-                                          new int[] { 7, 7, 0, 0 },
-                                          new int[] { 7, 0, 0, 0},
-                                          new int[] { 0, 0, 0, 0}};
-                }
-                else if (pos == 2)
-                {
-                    shape = new int[][] { new int[] { 0, 7, 0, 0 },
-                                          new int[] { 7, 7, 7, 0},
-                                          new int[] { 0, 0, 0, 0},
-                                          new int[] { 0, 0, 0, 0}};
-
-                }
-                else
-                {
-                    shape = new int[][] { new int[] { 0, 7, 0, 0 },
-                                          new int[] { 7, 7, 0, 0 },
-                                          new int[] { 0, 7, 0, 0 },
-                                          new int[] { 0, 0, 0, 0 }};
-                }
-            }
-
-        }
-    }
+  
 
     public class GameBoard
     {
-        int level;
-        int[,] field;
-        int score;
-        int lines;
-        Block next;
+        protected int level;
+        protected int[,] field;
+        protected int score;
+        protected int lines;
+        protected Block currentBlock;
 
         #region properties
         public int Level
@@ -430,26 +130,36 @@ namespace TetrisProject
             }
         }
 
-        public Block Next
+        public Block CurrBlock
         {
             get
             {
-                return next;
+                return currentBlock;
             }
 
             set
             {
-                next = value;
+                currentBlock = value;
             }
         }
         #endregion
 
         public GameBoard()
         {
+            chooseBlock();
             field = new int[18,10];
             level = 1;
             score = lines = 0;
 
+        }
+        public void chooseBlock()
+        {
+            Random rand = new Random();
+            int num = rand.Next(1, 8);
+
+            currentBlock = new Block(num);
+            currentBlock.X = 4;
+            currentBlock.Y = 0;
         }
         public Color colorPick(int i)
         {
@@ -484,7 +194,7 @@ namespace TetrisProject
             else
                 return Color.FromRgb(116, 61, 61);
         }
-        public void drawBoard(Canvas play_area)
+        public void drawField(Canvas play_area)
         {
             for(int y = 0; y < 18; y++)
             {
@@ -506,6 +216,35 @@ namespace TetrisProject
                     Canvas.SetLeft(square, x*20);
                     Canvas.SetTop(square, y*20);
                     play_area.Children.Add(square);
+                }
+            }
+        }
+        public void moveBlock()
+        {
+            //we have a 10x18 field of zeros
+            for(int y = 0; y < 14; y++)
+            {
+                for(int x = 0; x < 6; x++)
+                {
+                    if(x == CurrBlock.X && y == CurrBlock.Y)
+                    {
+                        field[y, x] = CurrBlock.Shape[0][0];
+                        field[y, x+1] = CurrBlock.Shape[0][1];
+                        field[y, x+2] = CurrBlock.Shape[0][2];
+                        field[y, x+3] = CurrBlock.Shape[0][3];
+                        field[y+1, x] = CurrBlock.Shape[1][0];
+                        field[y+1, x + 1] = CurrBlock.Shape[1][1];
+                        field[y+1, x + 2] = CurrBlock.Shape[1][2];
+                        field[y+1, x + 3] = CurrBlock.Shape[1][3];
+                        field[y + 2, x] = CurrBlock.Shape[2][0];
+                        field[y + 2, x + 1] = CurrBlock.Shape[2][1];
+                        field[y + 2, x + 2] = CurrBlock.Shape[2][2];
+                        field[y + 2, x + 3] = CurrBlock.Shape[2][3];
+                        field[y + 3, x ] = CurrBlock.Shape[3][0];
+                        field[y + 3, x + 1] = CurrBlock.Shape[3][1];
+                        field[y + 3, x + 2] = CurrBlock.Shape[3][2];
+                        field[y + 3, x + 3] = CurrBlock.Shape[3][3];
+                    }
                 }
             }
         }
