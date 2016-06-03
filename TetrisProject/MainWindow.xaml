@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisProject"
         mc:Ignorable="d"
-        Title="MainWindow" Height="426" Width="450" ResizeMode="CanMinimize">
+        Title="MainWindow" Height="500" Width="450" ResizeMode="CanMinimize">
     <Grid Background="#FF2E323E" Margin="0,0,2,-8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15*"/>
             <ColumnDefinition Width="244*"/>
         </Grid.ColumnDefinitions>
-        <Canvas HorizontalAlignment="Left" Height="360" Margin="10,24,0,-65" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2" Background="#FF743D3D"/>
+        <Canvas x:Name="play_area" HorizontalAlignment="Left" Height="360" Margin="10,24,0,-65" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2" Background="#FF743D3D"/>
         <DockPanel HorizontalAlignment="Left" Height="19" LastChildFill="False" Margin="0,0,0,0" VerticalAlignment="Top" Width="514" Grid.ColumnSpan="2">
             <Menu x:Name="menu" Height="19" VerticalAlignment="Top" Width="517">
                 <MenuItem Name="file" Header="File"></MenuItem>
@@ -25,10 +25,11 @@
         <Label x:Name="score_label" Content="Lines" Grid.Column="1" HorizontalAlignment="Left" Margin="258.4,218,0,0" VerticalAlignment="Top" Width="67" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
         <Label x:Name="score_label1" Content="Score" Grid.Column="1" HorizontalAlignment="Left" Margin="254.4,143,0,0" VerticalAlignment="Top" Width="76" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
         <Label x:Name="level_label" Content="Level" Grid.Column="1" HorizontalAlignment="Left" Margin="258.4,293,0,0" VerticalAlignment="Top" Width="67" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
-        <TextBox x:Name="score_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,185,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92" TextChanged="textBox_TextChanged_1" Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
-        <TextBox x:Name="lines_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,263,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92" TextChanged="textBox_TextChanged_1" Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
-        <TextBox x:Name="level_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,338,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92" TextChanged="textBox_TextChanged_1" Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
+        <TextBox x:Name="score_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,185,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
+        <TextBox x:Name="lines_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,263,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
+        <TextBox x:Name="level_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,338,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
         <Canvas x:Name="next_block_display" Grid.Column="1" HorizontalAlignment="Left" Height="75" Margin="230.4,68,0,0" VerticalAlignment="Top" Width="133" Background="#FF2E321E"/>
+        <Button x:Name="pause_button" Content="Pause" Grid.Column="1" HorizontalAlignment="Left" Margin="254.4,377,0,0" VerticalAlignment="Top" Width="75" Click="pause_button_Click" FontFamily="Comic Sans MS" FontSize="14" Foreground="Blue"/>
 
     </Grid>
 </Window>

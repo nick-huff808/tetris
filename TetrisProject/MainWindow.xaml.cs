@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace TetrisProject
 {
@@ -22,30 +23,40 @@ namespace TetrisProject
     /// </summary>
     public partial class MainWindow : Window
     {
-        //private DispatcherTimer dispatcherTimer;
+        private DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        private bool paused = true;
         public MainWindow()
         {
             InitializeComponent();
-            //dispatcherTimer.Tick += new EventHandler(timerTick);
+            GameBoard board = new GameBoard();
+            board.drawBoard(play_area);
+            dispatcherTimer.Tick += new EventHandler(timerTick);
             
-            //dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
         }
-
-        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void timerTick(object sender, EventArgs e)
         {
 
         }
 
-        private void textBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        private void pause_button_Click(object sender, RoutedEventArgs e)
         {
+            if(paused == true)
+            {
+                dispatcherTimer.Start();
+                pause_button.Content = "Pause";
+                paused = false;
+            }
+            else
+            {
+                dispatcherTimer.Stop();
+                pause_button.Content = "Resume";
+                paused = true;
+            }
 
         }
     }
 
-    /*private void timerTick(object sender, EventArgs e)
-    {
-
-    }*/
 
     public class Block
     {
@@ -341,7 +352,7 @@ namespace TetrisProject
                 else if (pos == 2)
                 {
                     shape = new int[][] { new int[] { 0, 7, 0, 0 },
-                                          new int[] { 7, 7, 7,  },
+                                          new int[] { 7, 7, 7, 0},
                                           new int[] { 0, 0, 0, 0},
                                           new int[] { 0, 0, 0, 0}};
 
@@ -380,7 +391,7 @@ namespace TetrisProject
             }
         }
 
-        public int[][] Field
+        public int[,] Field
         {
             get
             {
@@ -473,7 +484,7 @@ namespace TetrisProject
             else
                 return Color.FromRgb(116, 61, 61);
         }
-        public void drawBoard()
+        public void drawBoard(Canvas play_area)
         {
             for(int y = 0; y < 18; y++)
             {
@@ -483,14 +494,18 @@ namespace TetrisProject
 
                     //Taken from a stack overflow forum
                     Rectangle square = new Rectangle();
-                    square.Stroke = new SolidColorBrush(Colors.White);
-                    square.StrokeThickness = 2;
+                    if (field[y,x] != 0)
+                    {
+                        square.Stroke = new SolidColorBrush(Colors.White);
+                        square.StrokeThickness = 1;
+                    }
+                    
                     square.Fill = new SolidColorBrush(color);
                     square.Width = 20;
                     square.Height = 20;
                     Canvas.SetLeft(square, x*20);
                     Canvas.SetTop(square, y*20);
-
+                    play_area.Children.Add(square);
                 }
             }
         }

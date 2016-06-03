@@ -18,7 +18,6 @@ D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetri
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\bin\Debug\TetrisProject.exe.config
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.exe
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.pdb
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.csprojResolveAssemblyReference.cache
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\MainWindow.g.cs
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\App.g.cs
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject_MarkupCompile.cache
