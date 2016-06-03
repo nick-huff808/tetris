@@ -38,7 +38,7 @@ namespace TetrisProject
         }
         private void timerTick(object sender, EventArgs e)
         {
-            if(board.CurrBlock.Y == 14)
+            if(board.CurrBlock.Y == 15)
             {
                 board.chooseBlock();
             }
@@ -222,7 +222,7 @@ namespace TetrisProject
         public void moveBlock()
         {
             //we have a 10x18 field of zeros
-            for(int y = 0; y < 14; y++)
+            for(int y = 0; y < 15; y++)
             {
                 for(int x = 0; x < 6; x++)
                 {
