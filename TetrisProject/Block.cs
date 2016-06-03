@@ -11,7 +11,7 @@ namespace TetrisProject
     {
         protected Color color;
         protected int[][] shape;
-        protected int id;
+        private int id;
         protected int pos;
         protected int x;
         protected int y;
@@ -79,6 +79,19 @@ namespace TetrisProject
             set
             {
                 y = value;
+            }
+        }
+
+        public int Id
+        {
+            get
+            {
+                return id;
+            }
+
+            set
+            {
+                id = value;
             }
         }
         #endregion

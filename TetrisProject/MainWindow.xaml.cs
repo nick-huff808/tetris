@@ -147,6 +147,8 @@ namespace TetrisProject
         public GameBoard()
         {
             chooseBlock();
+            currentBlock.Y = -1;
+
             field = new int[18,10];
             level = 1;
             score = lines = 0;
@@ -157,7 +159,7 @@ namespace TetrisProject
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            currentBlock = new Block(num);
+            currentBlock = new Block(1);
             currentBlock.X = 4;
             currentBlock.Y = 0;
         }
@@ -224,29 +226,51 @@ namespace TetrisProject
             //we have a 10x18 field of zeros
             for(int y = 0; y < 15; y++)
             {
-                for(int x = 0; x < 6; x++)
+
+                for (int x = 0; x < 10; x++)
                 {
-                    if(x == CurrBlock.X && y == CurrBlock.Y)
+                    
+                    if (x == CurrBlock.X && y == CurrBlock.Y)
                     {
-                        field[y, x] = CurrBlock.Shape[0][0];
-                        field[y, x+1] = CurrBlock.Shape[0][1];
-                        field[y, x+2] = CurrBlock.Shape[0][2];
-                        field[y, x+3] = CurrBlock.Shape[0][3];
-                        field[y+1, x] = CurrBlock.Shape[1][0];
-                        field[y+1, x + 1] = CurrBlock.Shape[1][1];
-                        field[y+1, x + 2] = CurrBlock.Shape[1][2];
-                        field[y+1, x + 3] = CurrBlock.Shape[1][3];
-                        field[y + 2, x] = CurrBlock.Shape[2][0];
-                        field[y + 2, x + 1] = CurrBlock.Shape[2][1];
-                        field[y + 2, x + 2] = CurrBlock.Shape[2][2];
-                        field[y + 2, x + 3] = CurrBlock.Shape[2][3];
-                        field[y + 3, x ] = CurrBlock.Shape[3][0];
-                        field[y + 3, x + 1] = CurrBlock.Shape[3][1];
-                        field[y + 3, x + 2] = CurrBlock.Shape[3][2];
-                        field[y + 3, x + 3] = CurrBlock.Shape[3][3];
+                        int currentY = y;
+                        for (int by = 0; by < 4; by++)
+                        {
+                            
+                            int currentX = x;
+                            for (int bx = 0; bx < 4; bx++)
+                            {
+                                
+                                if (currentBlock.Shape[by][bx] != 0)
+                                {
+                                    field[currentY, currentX] = currentBlock.Shape[by][bx];
+                                    deleteTrailDown(currentBlock, field);
+
+                                }
+                                currentX++;    
+                            }
+                            currentY++;
+                        }
+                    
                     }
                 }
             }
         }
+
+        private void deleteTrailDown(Block currentBlock, int[,] field)
+        {
+            
+            if (CurrBlock.Id == 1 && (currentBlock.Pos ==1 || currentBlock.Pos == 3))
+            {
+
+                for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
+                {
+                    
+                    field[CurrBlock.Y+2, x] = 0;
+                }
+                
+            }
+        }
+
+        
     }
 }
