@@ -183,7 +183,7 @@ namespace TetrisProject
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            currentBlock = new Block(1);
+            currentBlock = new Block(5);
             currentBlock.X = 4;
             currentBlock.Y = 0;
         }
@@ -283,7 +283,7 @@ namespace TetrisProject
         private void deleteTrailDown(Block currentBlock, int[,] field)
         {
             
-            if (CurrBlock.Id == 1 && (currentBlock.Pos ==1 || currentBlock.Pos == 3))
+            if (CurrBlock.Id == 1 && currentBlock.Pos == 0)
             {
 
                 for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
@@ -293,6 +293,55 @@ namespace TetrisProject
                 }
                 
             }
+            else if (CurrBlock.Id == 2 && currentBlock.Pos == 0)
+            {
+                field[CurrBlock.Y + 1, CurrBlock.X] = 0;
+                for (int x = CurrBlock.X + 1; x < CurrBlock.X + 4; x++)
+                {
+                    
+                    field[CurrBlock.Y + 2, x] = 0;
+                }
+            }
+            else if (CurrBlock.Id == 3 && currentBlock.Pos == 0)
+            {
+                for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
+                {
+                    field[CurrBlock.Y + 1, x] = 0;
+                }
+            }
+            else if (CurrBlock.Id == 4 && currentBlock.Pos == 0)
+            {
+                field[CurrBlock.Y + 2, CurrBlock.X] = 0;
+                for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
+                {
+                    field[CurrBlock.Y + 1, x] = 0;
+                }
+            }
+            else if (CurrBlock.Id == 5 && currentBlock.Pos == 0)
+            {
+                field[CurrBlock.Y + 2, CurrBlock.X + 2] = 0;
+                for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
+                {
+                    field[CurrBlock.Y + 1, x] = 0;
+                }
+            }
+            else if (CurrBlock.Id == 6 && currentBlock.Pos == 0)
+            {
+                for (int x = CurrBlock.X; x < CurrBlock.X + 2; x++)
+                {
+
+                    field[CurrBlock.Y + 2, x] = 0;
+                }
+            }
+            else if (CurrBlock.Id == 7 && currentBlock.Pos == 0)
+            {
+                for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
+                {
+
+                    field[CurrBlock.Y + 2, x] = 0;
+                }
+            }
+
         }
 
         
