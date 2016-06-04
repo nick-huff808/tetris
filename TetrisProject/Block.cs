@@ -126,7 +126,7 @@ namespace TetrisProject
                 shape = new int[][] { new int[] { 0, 0, 0, 0},
                                       new int[] { 0, 0, 0, 0},
                                       new int[] { 2, 0, 0, 0 },
-                                      new int[] { 2, 2, 2, 2 },
+                                      new int[] { 2, 2, 2, 0 },
                                       };
             }
             else if (i == 3)
@@ -134,7 +134,7 @@ namespace TetrisProject
                 color = Colors.Green;
                 shape = new int[][] { new int[] { 0, 0, 0, 0 },
                                       new int[] { 0, 0, 0, 0 },
-                                      new int[] { 3, 3, 3, 3 },
+                                      new int[] { 3, 3, 3, 0 },
                                       new int[] { 3, 0, 0, 0 }
                                       };
             }
@@ -221,12 +221,12 @@ namespace TetrisProject
                     shape = new int[][] { new int[] { 0, 0, 0, 0},
                                           new int[] { 0, 0, 0, 0},
                                           new int[] { 2, 0, 0, 0 },
-                                          new int[] { 2, 2, 2, 2 },};
+                                          new int[] { 2, 2, 2, 0 },};
                 }
                 else if (pos == 1)
                 {
-                    shape = new int[][] { new int[] { 2, 2, 0, 0 },
-                                          new int[] { 2, 0, 0, 0 },
+                    shape = new int[][] { new int[] { 0, 0, 0, 0 },
+                                          new int[] { 2, 2, 0, 0 },
                                           new int[] { 2, 0, 0, 0},
                                           new int[] { 2, 0, 0, 0}};
                 }
@@ -234,14 +234,14 @@ namespace TetrisProject
                 {
                     shape = new int[][] { new int[] { 0, 0, 0, 0},
                                           new int[] { 0, 0, 0, 0},
-                                          new int[] { 2, 2, 2, 2 },
-                                          new int[] { 0, 0, 0, 2 },
+                                          new int[] { 2, 2, 2, 0 },
+                                          new int[] { 0, 0, 2, 0 },
                                           };
 
                 }
                 else
                 {
-                    shape = new int[][] { new int[] { 0, 2, 0, 0 },
+                    shape = new int[][] { new int[] { 0, 0, 0, 0 },
                                           new int[] { 0, 2, 0, 0 },
                                           new int[] { 0, 2, 0, 0},
                                           new int[] { 2, 2, 0, 0}};
@@ -254,12 +254,12 @@ namespace TetrisProject
                 {
                     shape = new int[][] { new int[] { 0, 0, 0, 0 },
                                           new int[] { 0, 0, 0, 0 },
-                                          new int[] { 3, 3, 3, 3 },
+                                          new int[] { 3, 3, 3, 0 },
                                           new int[] { 3, 0, 0, 0 }};
                 }
                 else if (pos == 1)
                 {
-                    shape = new int[][] { new int[] { 3, 0, 0, 0 },
+                    shape = new int[][] { new int[] { 0, 0, 0, 0 },
                                           new int[] { 3, 0, 0, 0 },
                                           new int[] { 3, 0, 0, 0},
                                           new int[] { 3, 3, 0, 0}};
@@ -268,15 +268,15 @@ namespace TetrisProject
                 {
                     shape = new int[][] { new int[] { 0, 0, 0, 0},
                                           new int[] { 0, 0, 0, 0},
-                                          new int[] { 0, 0, 0, 3 },
-                                          new int[] { 3, 3, 3, 3 },
+                                          new int[] { 0, 0, 3, 0},
+                                          new int[] { 3, 3, 3, 0},
                                           };
 
                 }
                 else
                 {
-                    shape = new int[][] { new int[] { 3, 3, 0, 0 },
-                                          new int[] { 0, 3, 0, 0 },
+                    shape = new int[][] { new int[] { 0, 0, 0, 0 },
+                                          new int[] { 3, 3, 0, 0 },
                                           new int[] { 0, 3, 0, 0},
                                           new int[] { 0, 3, 0, 0}};
                 }

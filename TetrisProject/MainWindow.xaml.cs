@@ -23,7 +23,8 @@ namespace TetrisProject
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        private DispatcherTimer movementDownTimer = new DispatcherTimer();
+        private DispatcherTimer movementSideTimer = new DispatcherTimer();
         private bool paused = true;
         GameBoard board = new GameBoard();
 
@@ -31,12 +32,22 @@ namespace TetrisProject
         {
             InitializeComponent();          
             board.drawField(play_area);
-            dispatcherTimer.Tick += new EventHandler(timerTick);
-            
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-            dispatcherTimer.Start();
+
+            movementDownTimer.Tick += new EventHandler(downwardTick);
+            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            movementDownTimer.Start();
+
+            movementSideTimer.Interval = new TimeSpan(0, 0, 0, 50);
+            movementSideTimer.Tick += new EventHandler(sidewardTick);
+            movementSideTimer.Start();
         }
-        private void timerTick(object sender, EventArgs e)
+
+        private void sidewardTick(object sender, EventArgs e)
+        {
+            board.drawField(play_area);
+        }
+
+        private void downwardTick(object sender, EventArgs e)
         {
             if(board.CurrBlock.Y == 15)
             {
@@ -56,13 +67,13 @@ namespace TetrisProject
         {
             if(paused == true)
             {
-                dispatcherTimer.Start();
+                movementDownTimer.Start();
                 pause_button.Content = "Pause";
                 paused = false;
             }
             else
             {
-                dispatcherTimer.Stop();
+                movementDownTimer.Stop();
                 pause_button.Content = "Resume";
                 paused = true;
             }
@@ -79,12 +90,14 @@ namespace TetrisProject
                 if (board.CurrBlock.X <= 0)
                 {
                     board.CurrBlock.X = 0;
+
                 }
                 else
                 {
                     board.CurrBlock.X--;
                 }
-                
+                deleteTrailLeft();
+                    
                     
             }
             else if (e.Key == Key.Right)
@@ -98,9 +111,277 @@ namespace TetrisProject
                 {
                     board.CurrBlock.X++;
                 }
+                deleteTrailRight();
             }
             board.drawField(play_area);
         
+        }
+
+        private void deleteTrailRight()
+        {
+            int id = board.CurrBlock.Id;
+            int p = board.CurrBlock.Pos;
+            int currX = board.CurrBlock.X;
+            int currY = board.CurrBlock.Y;
+            if (id == 1)
+            {
+
+                if (p % 2 == 0)
+                {
+                    board.Field[currY +3, currX -1] = 0;
+                }
+                else
+                {
+                    for (int i = 0; i < 4; i++)
+                        board.Field[currY + i, currX - 1] = 0;
+                }
+
+            }
+            else if (id == 2)
+            {
+                if (p == 0)
+                {
+                    board.Field[currY + 3, currX -1] = 0;
+                    board.Field[currY + 2, currX - 1] = 0;
+                }
+                else if (p == 1)
+                {
+                    board.Field[currY +1, currX - 1] = 0;
+                    board.Field[currY + 2, currX - 1] = 0;
+                    board.Field[currY + 3, currX - 1] = 0;
+                }
+                else if (p == 2)
+                {
+                    board.Field[currY + 2, currX -1] = 0;
+                    board.Field[currY + 3, currX + 1] = 0;
+                }
+                else
+                {
+                    board.Field[currY + 1, currX ] = 0;
+                    board.Field[currY + 2, currX ] = 0;
+                    board.Field[currY + 3, currX - 1] = 0;
+                }
+            }
+            else if (id == 3)
+            {
+                if (p == 0)
+                {
+                    board.Field[currY + 3, currX -1] = 0;
+                    board.Field[currY + 2, currX -1] = 0;
+                }
+                else if (p == 1)
+                {
+                    board.Field[currY + 3, currX - 2] = 0;
+                    board.Field[currY + 1, currX - 1] = 0;
+                    board.Field[currY + 2, currX - 1] = 0;
+                }
+                else if (p == 2)
+                {
+                    board.Field[currY + 2, currX + 1] = 0;
+                    board.Field[currY + 3, currX - 1] = 0;
+                }
+                else
+                {
+                    board.Field[currY + 1, currX - 1] = 0;
+                    board.Field[currY + 2, currX ] = 0;
+                    board.Field[currY + 3, currX ] = 0;
+                }
+            }
+            else if (id == 4)
+            {
+                if (p % 2 == 0)
+                {
+                    board.Field[currY + 2, currX] = 0;
+                    board.Field[currY + 3, currX -1] = 0;
+                }
+                else
+                {
+
+                    board.Field[currY + 1, currX - 1] = 0;
+                    board.Field[currY + 2, currX - 1] = 0;
+                    board.Field[currY + 3, currX] = 0;
+                }
+
+            }
+            else if (id == 5)
+            {
+                if (p % 2 == 0)
+                {
+                    board.Field[currY + 2, currX -1 ] = 0;
+                    board.Field[currY + 3, currX] = 0;
+                }
+                else
+                {
+
+                    board.Field[currY + 1, currX] = 0;
+                    board.Field[currY + 2, currX - 1] = 0;
+                    board.Field[currY + 3, currX - 1] = 0;
+                }
+
+            }
+            else if (id == 6)
+            {
+                board.Field[currY + 2, currX -1] = 0;
+                board.Field[currY + 3, currX -1] = 0;
+            }
+            else
+            {
+                if (p == 0)
+                {
+                    board.Field[currY + 2, currX -1] = 0;
+                    board.Field[currY + 3, currX] = 0;
+                }
+                else if (p == 1)
+                {
+                    board.Field[currY + 1, currX - 1] = 0;
+                    board.Field[currY + 2, currX - 1] = 0;
+                    board.Field[currY + 3, currX - 1] = 0;
+                }
+                else if (p == 2)
+                {
+                    board.Field[currY + 2, currX] = 0;
+                    board.Field[currY + 3, currX -1] = 0;
+                }
+                else
+                {
+                    board.Field[currY + 1, currX] = 0;
+                    board.Field[currY + 2, currX - 1] = 0;
+                    board.Field[currY + 3, currX] = 0;
+                }
+            }
+        }
+
+        private void deleteTrailLeft()
+        {
+            int id = board.CurrBlock.Id;
+            int p = board.CurrBlock.Pos;
+            int currX = board.CurrBlock.X;
+            int currY = board.CurrBlock.Y;
+            if (id == 1)
+            {
+
+                if (p % 2 == 0)
+                {
+                    board.Field[currY + 3, currX + 4] = 0;
+                }
+                else
+                {
+                    for (int i = 0; i < 4; i++)
+                        board.Field[currY + i, currX + 1] = 0;
+                }
+
+            }
+            else if (id == 2)
+            {
+                if (p == 0)
+                {
+                    board.Field[currY + 3, currX + 3] = 0;
+                    board.Field[currY + 2, currX + 1] = 0;
+                }
+                else if (p == 1)
+                {
+                    
+                    board.Field[currY + 1, currX + 2] = 0;
+                    board.Field[currY + 2, currX + 1] = 0;
+                    board.Field[currY + 3, currX + 1] = 0;
+                }
+                else if (p == 2)
+                {
+                    board.Field[currY + 2, currX + 3] = 0;
+                    board.Field[currY + 3, currX + 3] = 0;
+                }
+                else
+                {
+                    for (int i = 1; i < 4; i++)
+                        board.Field[currY + i, currX + 2] = 0;
+                }
+            }
+            else if (id == 3)
+            {
+                if (p == 0)
+                {
+                    board.Field[currY + 3, currX + 1] = 0;
+                    board.Field[currY + 2, currX + 4] = 0;
+                }
+                else if (p == 1)
+                {
+                    board.Field[currY + 3, currX + 2] = 0;
+                    board.Field[currY + 1, currX + 1] = 0;
+                    board.Field[currY + 2, currX + 1] = 0;
+                    board.Field[currY + 0, currX + 1] = 0;
+                }
+                else if (p == 2)
+                {
+                    board.Field[currY + 2, currX + 4] = 0;
+                    board.Field[currY + 3, currX + 4] = 0;
+                }
+                else
+                {
+                    for (int i = 0; i < 4; i++)
+                        board.Field[currY + i, currX + 2] = 0;
+                }
+            }
+            else if (id == 4)
+            {
+                if (p % 2 == 0)
+                {
+                    board.Field[currY + 2, currX + 3] = 0;
+                    board.Field[currY + 3, currX + 2] = 0;
+                }
+                else
+                {
+
+                    board.Field[currY + 1, currX + 1] = 0;
+                    board.Field[currY + 2, currX + 2] = 0;
+                    board.Field[currY + 3, currX + 2] = 0;
+                }
+
+            }
+            else if (id == 5)
+            {
+                if (p % 2 == 0)
+                {
+                    board.Field[currY + 2, currX + 2] = 0;
+                    board.Field[currY + 3, currX + 3] = 0;
+                }
+                else
+                {
+
+                    board.Field[currY + 1, currX + 2] = 0;
+                    board.Field[currY + 2, currX + 2] = 0;
+                    board.Field[currY + 3, currX + 1] = 0;
+                }
+
+            }
+            else if (id == 6)
+            {
+                board.Field[currY + 2, currX + 2] = 0;
+                board.Field[currY + 3, currX + 2] = 0;
+            }
+            else
+            {
+                if (p == 0)
+                {
+                    board.Field[currY + 2, currX + 3] = 0;
+                    board.Field[currY + 3, currX + 2] = 0;
+                }
+                else if (p == 1)
+                {
+                    board.Field[currY + 1, currX + 1] = 0;
+                    board.Field[currY + 2, currX + 2] = 0;
+                    board.Field[currY + 3, currX + 1] = 0;
+                }
+                else if (p == 2)
+                {
+                    board.Field[currY + 2, currX + 2] = 0;
+                    board.Field[currY + 3, currX + 3] = 0;
+                }
+                else
+                {
+                    for (int i = 1; i < 4; i++)
+                        board.Field[currY + i, currX + 2] = 0;
+                }
+            }
         }
 
         private int checkWidth(Block currBlock)
