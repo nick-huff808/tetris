@@ -71,9 +71,16 @@ namespace TetrisProject
 
         private void play_area_KeyDown(object sender, KeyEventArgs e)
         {
+            
+            int pWidth = checkWidth(board.CurrBlock);
+
             if (e.Key == Key.Left)
             {
-                if (board.CurrBlock.X != 0)
+                if (board.CurrBlock.X <= 0)
+                {
+                    board.CurrBlock.X = 0;
+                }
+                else
                 {
                     board.CurrBlock.X--;
                 }
@@ -83,12 +90,73 @@ namespace TetrisProject
             else if (e.Key == Key.Right)
             {
 
-                if (board.CurrBlock.X != 9)
+                if (board.CurrBlock.X >= 10 -pWidth)
+                {
+                    board.CurrBlock.X = 10-pWidth;
+                }
+                else
                 {
                     board.CurrBlock.X++;
                 }
             }
+            board.drawField(play_area);
         
+        }
+
+        private int checkWidth(Block currBlock)
+        {
+            int id = currBlock.Id;
+            int p = currBlock.Pos;
+
+            if (id == 1)
+            {
+                if (p == 1 || p == 3)
+                {
+                    return 1;
+                }
+                else
+                    return 4;
+            }
+            else if (id == 2)
+            {
+                if (p % 2 == 0)
+                    return 4;
+                else
+                    return 2;
+            }
+            else if (id == 3)
+            {
+                if (p % 2 == 0)
+                    return 4;
+                else
+                    return 2;
+            }
+            else if (id == 4)
+            {
+                if (p % 2 == 0)
+                    return 3;
+                else
+                    return 2;
+            }
+            else if (id == 5)
+            {
+                if (p % 2 == 0)
+                    return 3;
+                else
+                    return 2;
+            }
+            else if (id == 6)
+            {
+                    return 2;
+            }
+            else if (id == 2)
+            {
+                if (p % 2 == 0)
+                    return 3;
+                else
+                    return 2;
+            }
+            return 0;
         }
     }
 
