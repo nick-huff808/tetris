@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisProject"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="450" ResizeMode="CanMinimize">
-    <Grid Background="#FF2E323E" Margin="0,0,2,-8">
+        Title="MainWindow" Height="500" Width="450" ResizeMode="CanMinimize" KeyDown="play_area_KeyDown">
+    <Grid Background="#FF2E323E" Margin="0,0,2,-8" KeyDown="play_area_KeyDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15*"/>
             <ColumnDefinition Width="244*"/>
         </Grid.ColumnDefinitions>
-        <Canvas x:Name="play_area" HorizontalAlignment="Left" Height="360" Margin="10,24,0,-65" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2" Background="#FF743D3D"/>
+        <Canvas x:Name="play_area" HorizontalAlignment="Left" Height="360" Margin="10,24,0,-65" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2" Background="#FF743D3D" KeyDown="play_area_KeyDown"/>
         <DockPanel HorizontalAlignment="Left" Height="19" LastChildFill="False" Margin="0,0,0,0" VerticalAlignment="Top" Width="514" Grid.ColumnSpan="2">
             <Menu x:Name="menu" Height="19" VerticalAlignment="Top" Width="517">
                 <MenuItem Name="file" Header="File"></MenuItem>

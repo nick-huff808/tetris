@@ -46,6 +46,8 @@ namespace TetrisProject
             {
                 board.CurrBlock.Y++;
                 board.moveBlock();
+                
+
             }
             board.drawField(play_area);
         }
@@ -66,8 +68,30 @@ namespace TetrisProject
             }
 
         }
+
+        private void play_area_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Left)
+            {
+                if (board.CurrBlock.X != 0)
+                {
+                    board.CurrBlock.X--;
+                }
+                
+                    
+            }
+            else if (e.Key == Key.Right)
+            {
+
+                if (board.CurrBlock.X != 9)
+                {
+                    board.CurrBlock.X++;
+                }
+            }
+        
+        }
     }
-  
+
 
     public class GameBoard
     {
