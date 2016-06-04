@@ -104,15 +104,14 @@ namespace TetrisProject
          * 6 == square
          * 7 == t 
          */
-        public Block(int i)
+        public Block(int id)
         {
 
-
-            id = i;
+            this.id = id;
             pos = 0;
             X = 4;
             Y = -1;
-            if (i == 1)
+            if (id == 1)
             {
                 color = Colors.Blue;
                 shape = new int[][] { new int[] { 0,0,0,0},
@@ -120,7 +119,7 @@ namespace TetrisProject
                                       new int[] { 0,0,0,0},
                                       new int[] { 1,1,1,1} };
             }
-            else if (i == 2)
+            else if (id == 2)
             {
                 color = Colors.Red;
                 shape = new int[][] { new int[] { 0, 0, 0, 0},
@@ -129,7 +128,7 @@ namespace TetrisProject
                                       new int[] { 2, 2, 2, 0 },
                                       };
             }
-            else if (i == 3)
+            else if (id == 3)
             {
                 color = Colors.Green;
                 shape = new int[][] { new int[] { 0, 0, 0, 0 },
@@ -138,7 +137,7 @@ namespace TetrisProject
                                       new int[] { 3, 0, 0, 0 }
                                       };
             }
-            else if (i == 4)
+            else if (id == 4)
             {
                 color = Colors.Yellow;
                 shape = new int[][] { new int[] { 0 ,0 ,0 ,0 },
@@ -147,7 +146,7 @@ namespace TetrisProject
                                       new int[] { 4, 4, 0, 0 }
                                       };
             }
-            else if (i == 5)
+            else if (id == 5)
             {
                 color = Colors.Purple;
                 shape = new int[][] { new int[] { 0 ,0 ,0 ,0 },
@@ -157,7 +156,7 @@ namespace TetrisProject
                                       };
 
             }
-            else if (i == 6)
+            else if (id == 6)
             {
                 color = Colors.Black;
                 shape = new int[][] { new int[] { 0, 0, 0, 0 },
@@ -165,7 +164,7 @@ namespace TetrisProject
                                       new int[] { 6 ,6 ,0 ,0 },
                                       new int[] { 6 ,6 ,0 ,0 }};
             }
-            else if (i == 7)
+            else if (id == 7)
             {
                 color = Colors.DarkGreen;
                 shape = new int[][] { new int[] { 0 ,0 ,0 ,0 },
@@ -179,9 +178,9 @@ namespace TetrisProject
         }
 
 
-        private void Rotate(int i)
+        private void Rotate(int rotation_direction)
         {
-            if (i == 1)
+            if (rotation_direction == 1)
             {
                 pos++;
                 pos += pos % 4;
@@ -195,7 +194,7 @@ namespace TetrisProject
             }
 
             //if a line
-            if (id == 1)
+            if (this.id == 1)
             {
                 if (pos == 1 || pos == 3)
                 {
@@ -214,7 +213,7 @@ namespace TetrisProject
                 }
             }
             //if backwards L
-            else if (id == 2)
+            else if (this.id == 2)
             {
                 if (pos == 0)
                 {
@@ -248,7 +247,7 @@ namespace TetrisProject
                 }
             }
             //if regular L
-            else if (id == 3)
+            else if (this.id == 3)
             {
                 if (pos == 0)
                 {
@@ -282,7 +281,7 @@ namespace TetrisProject
                 }
             }
             //S
-            else if (id == 4)
+            else if (this.id == 4)
             {
                 if (pos == 0 || pos == 2)
                 {
@@ -304,7 +303,7 @@ namespace TetrisProject
 
             }
             //Z
-            else if (id == 5)
+            else if (this.id == 5)
             {
                 if (pos == 0 || pos == 2)
                 {
@@ -324,10 +323,10 @@ namespace TetrisProject
 
             }
             //Square
-            else if (id == 6)
+            else if (this.id == 6)
                 return;
             //T
-            else if (id == 7)
+            else if (this.id == 7)
             {
                 if (pos == 0)
                 {
@@ -364,6 +363,62 @@ namespace TetrisProject
                 }
             }
 
+        }
+
+        public int checkWidth()
+        {
+            int id = Id;
+            int position = Pos;
+
+            if (id == 1)
+            {
+                if (position == 1 || position == 3)
+                {
+                    return 1;
+                }
+                else
+                    return 4;
+            }
+            else if (id == 2)
+            {
+                if (position % 2 == 0)
+                    return 4;
+                else
+                    return 2;
+            }
+            else if (id == 3)
+            {
+                if (position % 2 == 0)
+                    return 4;
+                else
+                    return 2;
+            }
+            else if (id == 4)
+            {
+                if (position % 2 == 0)
+                    return 3;
+                else
+                    return 2;
+            }
+            else if (id == 5)
+            {
+                if (position % 2 == 0)
+                    return 3;
+                else
+                    return 2;
+            }
+            else if (id == 6)
+            {
+                return 2;
+            }
+            else if (id == 7)
+            {
+                if (position % 2 == 0)
+                    return 3;
+                else
+                    return 2;
+            }
+            return 0;
         }
     }
 }

@@ -34,23 +34,19 @@ namespace TetrisProject
             board.drawField(play_area);
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
-            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             movementDownTimer.Start();
 
-            movementSideTimer.Interval = new TimeSpan(0, 0, 0, 50);
-            movementSideTimer.Tick += new EventHandler(sidewardTick);
-            movementSideTimer.Start();
+            //movementSideTimer.Interval = new TimeSpan(0, 0, 0, 100);
+            //movementSideTimer.Tick += new EventHandler(sidewardTick);
+            //movementSideTimer.Start();
         }
 
-        private void sidewardTick(object sender, EventArgs e)
-        {
-            board.drawField(play_area);
-        }
 
         private void downwardTick(object sender, EventArgs e)
         {
-            if(board.CurrBlock.Y == 15)
-            {
+            if(board.CurrBlock.Y == 14 || (board.CurrBlock.Y != 14 && board.checkBlockCollision() == true))
+            { 
                 board.chooseBlock();
             }
             else
@@ -83,9 +79,12 @@ namespace TetrisProject
         private void play_area_KeyDown(object sender, KeyEventArgs e)
         {
             
-            int pWidth = checkWidth(board.CurrBlock);
-
-            if (e.Key == Key.Left)
+            int pWidth = board.CurrBlock.checkWidth();
+            if(board.CurrBlock.Y == 14)
+            {
+                return;
+            }
+            else if (e.Key == Key.Left)
             {
                 if (board.CurrBlock.X <= 0)
                 {
@@ -96,6 +95,7 @@ namespace TetrisProject
                 {
                     board.CurrBlock.X--;
                 }
+                board.moveBlock();
                 deleteTrailLeft();
                     
                     
@@ -111,10 +111,10 @@ namespace TetrisProject
                 {
                     board.CurrBlock.X++;
                 }
+                board.moveBlock();
                 deleteTrailRight();
             }
             board.drawField(play_area);
-        
         }
 
         private void deleteTrailRight()
@@ -128,7 +128,7 @@ namespace TetrisProject
 
                 if (p % 2 == 0)
                 {
-                    board.Field[currY +3, currX -1] = 0;
+                    board.Field[currY +3, currX-1] = 0;
                 }
                 else
                 {
@@ -383,62 +383,7 @@ namespace TetrisProject
                 }
             }
         }
-
-        private int checkWidth(Block currBlock)
-        {
-            int id = currBlock.Id;
-            int p = currBlock.Pos;
-
-            if (id == 1)
-            {
-                if (p == 1 || p == 3)
-                {
-                    return 1;
-                }
-                else
-                    return 4;
-            }
-            else if (id == 2)
-            {
-                if (p % 2 == 0)
-                    return 4;
-                else
-                    return 2;
-            }
-            else if (id == 3)
-            {
-                if (p % 2 == 0)
-                    return 4;
-                else
-                    return 2;
-            }
-            else if (id == 4)
-            {
-                if (p % 2 == 0)
-                    return 3;
-                else
-                    return 2;
-            }
-            else if (id == 5)
-            {
-                if (p % 2 == 0)
-                    return 3;
-                else
-                    return 2;
-            }
-            else if (id == 6)
-            {
-                    return 2;
-            }
-            else if (id == 2)
-            {
-                if (p % 2 == 0)
-                    return 3;
-                else
-                    return 2;
-            }
-            return 0;
-        }
+        
     }
 
 
@@ -532,37 +477,39 @@ namespace TetrisProject
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            currentBlock = new Block(5);
+            currentBlock = new Block(num);
             currentBlock.X = 4;
             currentBlock.Y = 0;
         }
         public Color colorPick(int i)
         {
-            if(i == 1)
+            int id = i % 10;
+
+            if(id == 1)
             {
                 return Colors.Blue;
             }
-            else if (i == 2)
+            else if (id == 2)
             {
                 return Colors.Red;
             }
-            else if (i == 3)
+            else if (id == 3)
             {
                 return Colors.Green;
             }
-            else if (i == 4)
+            else if (id == 4)
             {
                 return Colors.Yellow;
             }
-            else if (i == 5)
+            else if (id == 5)
             {
                 return Colors.Purple;
             }
-            else if (i == 6)
+            else if (id == 6)
             {
                 return Colors.Black;
             }
-            else if (i == 7)
+            else if (id == 7)
             {
                 return Colors.DarkGreen;
             }
@@ -599,7 +546,7 @@ namespace TetrisProject
             //we have a 10x18 field of zeros
             for(int y = 0; y < 15; y++)
             {
-
+                
                 for (int x = 0; x < 10; x++)
                 {
                     
@@ -616,7 +563,7 @@ namespace TetrisProject
                                 if (currentBlock.Shape[by][bx] != 0)
                                 {
                                     field[currentY, currentX] = currentBlock.Shape[by][bx];
-                                    deleteTrailDown(currentBlock, field);
+                                    deleteTrailDown();
 
                                 }
                                 currentX++;    
@@ -629,7 +576,7 @@ namespace TetrisProject
             }
         }
 
-        private void deleteTrailDown(Block currentBlock, int[,] field)
+        private void deleteTrailDown()
         {
             
             if (CurrBlock.Id == 1 && currentBlock.Pos == 0)
@@ -679,20 +626,55 @@ namespace TetrisProject
                 for (int x = CurrBlock.X; x < CurrBlock.X + 2; x++)
                 {
 
-                    field[CurrBlock.Y + 2, x] = 0;
+                    field[CurrBlock.Y + 1, x] = 0;
                 }
             }
             else if (CurrBlock.Id == 7 && currentBlock.Pos == 0)
             {
                 for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
                 {
-
-                    field[CurrBlock.Y + 2, x] = 0;
+                    field[CurrBlock.Y + 1, x] = 0;
                 }
             }
 
         }
 
+        public bool checkBlockCollision()
+        {
+            bool collided = false;
+            int width = CurrBlock.checkWidth();
+
+            if(CurrBlock.Y > 0)
+            {
+                for (int y = CurrBlock.Y + 4; y > CurrBlock.Y+4 - y; y--)
+                {
+                    for (int x = CurrBlock.X; x < CurrBlock.X + width; x++)
+                    {
+                        if (Field[y, x] != 0)
+                        {
+                            if (Field[y - 1, x] != 0 && Field[y, x] != Field[y - 1, x])
+                                collided = true;
+                        }
+                    }
+                }
+            }
+            if(CurrBlock.Y == 14)
+            {
+                collided = true;
+            }
+            if(collided)
+            {
+                for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
+                {
+                    for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
+                    {
+                        if (Field[y, x] != 0)
+                            Field[y, x] += 10;
+                    }
+                }
+            }
+            return collided;
+        }
         
     }
 }
