@@ -34,19 +34,18 @@ namespace TetrisProject
             board.drawField(play_area);
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
-            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
             movementDownTimer.Start();
 
-            //movementSideTimer.Interval = new TimeSpan(0, 0, 0, 100);
-            //movementSideTimer.Tick += new EventHandler(sidewardTick);
-            //movementSideTimer.Start();
+            
         }
 
 
         private void downwardTick(object sender, EventArgs e)
         {
             if(board.CurrBlock.Y == 14 || (board.CurrBlock.Y != 14 && board.checkBlockCollision() == true))
-            { 
+            {
+                board.checkBlockCollision();
                 board.chooseBlock();
             }
             else
@@ -461,11 +460,11 @@ namespace TetrisProject
             }
         }
         #endregion
-
+    
         public GameBoard()
         {
             chooseBlock();
-            currentBlock.Y = -1;
+            currentBlock.Y = -2;
 
             field = new int[18,10];
             level = 1;
@@ -477,9 +476,9 @@ namespace TetrisProject
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            currentBlock = new Block(num);
+            currentBlock = new Block(5);
             currentBlock.X = 4;
-            currentBlock.Y = 0;
+            currentBlock.Y = -2;
         }
         public Color colorPick(int i)
         {
@@ -516,31 +515,44 @@ namespace TetrisProject
             else
                 return Color.FromRgb(116, 61, 61);
         }
+
         public void drawField(Canvas play_area)
         {
-            for(int y = 0; y < 18; y++)
+            if (CurrBlock.Y < 0)
             {
-                for (int x = 0; x < 10; x++)
-                {
-                    Color color = colorPick(field[y, x]);
-
-                    //Taken from a stack overflow forum
-                    Rectangle square = new Rectangle();
-                    if (field[y,x] != 0)
-                    {
-                        square.Stroke = new SolidColorBrush(Colors.White);
-                        square.StrokeThickness = 1;
-                    }
-                    
-                    square.Fill = new SolidColorBrush(color);
-                    square.Width = 20;
-                    square.Height = 20;
-                    Canvas.SetLeft(square, x*20);
-                    Canvas.SetTop(square, y*20);
-                    play_area.Children.Add(square);
-                }
+                drawPieceOnCoords(CurrBlock.X, CurrBlock.Y);
             }
+            
+                for (int y = 0; y < 18; y++)
+                {
+                    for (int x = 0; x < 10; x++)
+                    {
+
+
+                        Color color = colorPick(field[y, x]);
+
+                        //Taken from a stack overflow forum
+                        Rectangle square = new Rectangle();
+                        if (field[y, x] != 0)
+                        {
+                            square.Stroke = new SolidColorBrush(Colors.White);
+                            square.StrokeThickness = 1;
+                        }
+
+                        square.Fill = new SolidColorBrush(color);
+                        square.Width = 20;
+                        square.Height = 20;
+                        Canvas.SetLeft(square, x * 20);
+                        Canvas.SetTop(square, y * 20);
+                        play_area.Children.Add(square);
+
+                    }
+                }
+            
+            
         }
+
+        
         public void moveBlock()
         {
             //we have a 10x18 field of zeros
@@ -644,7 +656,7 @@ namespace TetrisProject
             bool collided = false;
             int width = CurrBlock.checkWidth();
 
-            if(CurrBlock.Y > 0)
+            if(CurrBlock.Y > 0 && CurrBlock.Y < 14)
             {
                 for (int y = CurrBlock.Y + 4; y > CurrBlock.Y+4 - y; y--)
                 {
@@ -664,16 +676,44 @@ namespace TetrisProject
             }
             if(collided)
             {
-                for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
+                for (int y = 0; y < 18; y++)
                 {
-                    for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
+                    for (int x = 0; x < 10; x++)
                     {
-                        if (Field[y, x] != 0)
+                        if (Field[y, x] > 0)
                             Field[y, x] += 10;
                     }
                 }
             }
             return collided;
+        }
+        private void drawPieceOnCoords(int boardX, int boardY)
+        {
+            
+            for (int y = 0; y <= 3; y++)
+            {
+                
+                for (int x = 0; x < 4; x++)
+                {
+                    if (CurrBlock.Shape[y][x] != 0)
+                    {
+                        field[y + boardY, x + boardX] = CurrBlock.Shape[y][x];
+                    }
+                    
+                }
+                
+            }
+
+            if(boardY == -1)
+            {
+                deleteTrailDown();
+            for (int i = 0; i < 10; i++)
+                        {
+                            field[0, i] = 0;
+                        }
+            }
+            
+            
         }
         
     }
