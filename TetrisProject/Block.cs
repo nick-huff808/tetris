@@ -382,14 +382,14 @@ namespace TetrisProject
             else if (id == 2)
             {
                 if (position % 2 == 0)
-                    return 4;
+                    return 3;
                 else
                     return 2;
             }
             else if (id == 3)
             {
                 if (position % 2 == 0)
-                    return 4;
+                    return 3;
                 else
                     return 2;
             }

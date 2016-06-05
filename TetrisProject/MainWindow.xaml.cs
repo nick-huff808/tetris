@@ -34,7 +34,7 @@ namespace TetrisProject
             board.drawField(play_area);
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
-            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 150);
             movementDownTimer.Start();
 
             
@@ -83,7 +83,7 @@ namespace TetrisProject
             {
                 return;
             }
-            else if (e.Key == Key.Left)
+            else if (e.Key == Key.Left && board.checkBlockCollisionToLeft() == false)
             {
                 if (board.CurrBlock.X <= 0)
                 {
@@ -99,7 +99,7 @@ namespace TetrisProject
                     
                     
             }
-            else if (e.Key == Key.Right)
+            else if (e.Key == Key.Right && board.checkBlockCollisionToRight() == false)
             {
 
                 if (board.CurrBlock.X >= 10 -pWidth)
@@ -300,7 +300,7 @@ namespace TetrisProject
                 if (p == 0)
                 {
                     board.Field[currY + 3, currX + 1] = 0;
-                    board.Field[currY + 2, currX + 4] = 0;
+                    board.Field[currY + 2, currX + 3] = 0;
                 }
                 else if (p == 1)
                 {
@@ -311,8 +311,8 @@ namespace TetrisProject
                 }
                 else if (p == 2)
                 {
-                    board.Field[currY + 2, currX + 4] = 0;
-                    board.Field[currY + 3, currX + 4] = 0;
+                    board.Field[currY + 2, currX + 3] = 0;
+                    board.Field[currY + 3, currX + 3] = 0;
                 }
                 else
                 {
@@ -476,7 +476,7 @@ namespace TetrisProject
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            currentBlock = new Block(5);
+            currentBlock = new Block(4);
             currentBlock.X = 4;
             currentBlock.Y = -2;
         }
@@ -596,56 +596,63 @@ namespace TetrisProject
 
                 for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
                 {
-                    
-                    field[CurrBlock.Y+2, x] = 0;
+                    if(field[CurrBlock.Y + 2, x] < 10)
+                        field[CurrBlock.Y+2, x] = 0;
                 }
                 
             }
             else if (CurrBlock.Id == 2 && currentBlock.Pos == 0)
             {
-                field[CurrBlock.Y + 1, CurrBlock.X] = 0;
-                for (int x = CurrBlock.X + 1; x < CurrBlock.X + 4; x++)
+                if (field[CurrBlock.Y + 1, CurrBlock.X] < 10)
+                    field[CurrBlock.Y + 1, CurrBlock.X] = 0;
+                for (int x = CurrBlock.X + 1; x < CurrBlock.X + 3; x++)
                 {
-                    
-                    field[CurrBlock.Y + 2, x] = 0;
+                    if (field[CurrBlock.Y + 2, x] < 10)
+                        field[CurrBlock.Y + 2, x] = 0;
                 }
             }
             else if (CurrBlock.Id == 3 && currentBlock.Pos == 0)
             {
-                for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
+                for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
                 {
-                    field[CurrBlock.Y + 1, x] = 0;
+                    if (field[CurrBlock.Y + 1, x] < 10)
+                        field[CurrBlock.Y + 1, x] = 0;
                 }
             }
             else if (CurrBlock.Id == 4 && currentBlock.Pos == 0)
             {
-                field[CurrBlock.Y + 2, CurrBlock.X] = 0;
+                if (field[CurrBlock.Y + 2, CurrBlock.X] < 10)
+                    field[CurrBlock.Y + 2, CurrBlock.X] = 0;
                 for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
                 {
-                    field[CurrBlock.Y + 1, x] = 0;
+                    if (field[CurrBlock.Y + 1, x] < 10)
+                        field[CurrBlock.Y + 1, x] = 0;
                 }
             }
             else if (CurrBlock.Id == 5 && currentBlock.Pos == 0)
             {
-                field[CurrBlock.Y + 2, CurrBlock.X + 2] = 0;
+                if (field[CurrBlock.Y + 2, CurrBlock.X + 2] < 10)
+                    field[CurrBlock.Y + 2, CurrBlock.X + 2] = 0;
                 for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
                 {
-                    field[CurrBlock.Y + 1, x] = 0;
+                    if (field[CurrBlock.Y + 1, x] < 10)
+                        field[CurrBlock.Y + 1, x] = 0;
                 }
             }
             else if (CurrBlock.Id == 6 && currentBlock.Pos == 0)
             {
                 for (int x = CurrBlock.X; x < CurrBlock.X + 2; x++)
                 {
-
-                    field[CurrBlock.Y + 1, x] = 0;
+                    if (field[CurrBlock.Y + 1, x] < 10)
+                        field[CurrBlock.Y + 1, x] = 0;
                 }
             }
             else if (CurrBlock.Id == 7 && currentBlock.Pos == 0)
             {
                 for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
                 {
-                    field[CurrBlock.Y + 1, x] = 0;
+                    if (field[CurrBlock.Y + 1, x] < 10)
+                        field[CurrBlock.Y + 1, x] = 0;
                 }
             }
 
@@ -682,6 +689,46 @@ namespace TetrisProject
                     {
                         if (Field[y, x] > 0)
                             Field[y, x] += 10;
+                    }
+                }
+            }
+            return collided;
+        }
+        public bool checkBlockCollisionToLeft()
+        {
+            bool collided = false;
+
+            if (CurrBlock.X > 0  && CurrBlock.Y > -1)
+            {
+                for (int x = CurrBlock.X - 1; x < CurrBlock.X + 2; x++)
+                {
+                    for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
+                    {                       
+                        if (Field[y,x] != 0)
+                        {
+                            if (Field[y, x-1] != 0 && Field[y,x] != Field[y, x-1])
+                                collided = true;
+                        }
+                    }
+                }
+            }
+            return collided;
+        }
+        public bool checkBlockCollisionToRight()
+        {
+            bool collided = false;
+
+            if (CurrBlock.X < 10 - CurrBlock.checkWidth() && CurrBlock.Y < 14 && CurrBlock.Y > -1)
+            {
+                for (int x = CurrBlock.X + CurrBlock.checkWidth()-1; x > CurrBlock.X-1; x--)
+                {
+                    for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
+                    {
+                        if (Field[y, x] != 0)
+                        {
+                            if (Field[y, x + 1] != 0 && Field[y, x] != Field[y, x + 1])
+                                collided = true;
+                        }
                     }
                 }
             }
