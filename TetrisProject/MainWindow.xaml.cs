@@ -34,7 +34,7 @@ namespace TetrisProject
             board.drawField(play_area);
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
-            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 150);
+            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 550);
             movementDownTimer.Start();
 
             
@@ -53,8 +53,10 @@ namespace TetrisProject
                 board.CurrBlock.Y++;
                 board.moveBlock();
                 
+                
 
             }
+            
             board.drawField(play_area);
         }
 
@@ -83,6 +85,7 @@ namespace TetrisProject
             {
                 return;
             }
+            #region left and right movement
             else if (e.Key == Key.Left && board.checkBlockCollisionToLeft() == false)
             {
                 if (board.CurrBlock.X <= 0)
@@ -111,51 +114,32 @@ namespace TetrisProject
                 board.moveBlock();
                 deleteTrailRight();
             }
+
+            #endregion
+
+            #region rotational movement
             else if (e.Key == Key.Up)
             {
-                if (board.rotateBlock(1))
+                if (board.CurrBlock.Y >= 0)
                 {
+                    board.rotateBlock(1);
                     
-                    deleteTrailRotate();
                 }
             }
             else if (e.Key == Key.Down)
             {
-                if (board.rotateBlock(-1))
+                if (board.CurrBlock.Y >= 0)
                 {
-                    
-                    deleteTrailRotate();
+
+                    board.rotateBlock(-1);
                 }
             }
+            #endregion
+
             board.drawField(play_area);
         }
 
-        private void deleteTrailRotate()
-        {
-            //compeletely delete the peiece from
-            for (int y = 0; y < 4; y++)
-            {
-                for (int x = 0; x < 4; x++)
-                {
-                    if (board.Field[board.CurrBlock.Y + y, board.CurrBlock.X + x] < 10)
-                        board.Field[board.CurrBlock.Y + y, board.CurrBlock.X + x] = 0;
-                }
-            }
-            //now redraw it with the oriantation
-            for (int y = 0; y <= 3; y++)
-            {
-
-                for (int x = 0; x < 4; x++)
-                {
-                    if (board.CurrBlock.Shape[y][x] != 0)
-                    {
-                        board.Field[board.CurrBlock.Y + y, board.CurrBlock.X + x] = board.CurrBlock.Shape[y][x];
-                    }
-
-                }
-
-            }
-        }
+       
 
         private void deleteTrailRight()
         {
@@ -211,9 +195,9 @@ namespace TetrisProject
                 }
                 else if (p == 1)
                 {
-                    board.Field[currY + 3, currX - 2] = 0;
-                    board.Field[currY + 1, currX - 1] = 0;
+                    board.Field[currY + 1, currX -1] = 0;
                     board.Field[currY + 2, currX - 1] = 0;
+                    board.Field[currY + 3, currX - 1] = 0;
                 }
                 else if (p == 2)
                 {
@@ -517,7 +501,7 @@ namespace TetrisProject
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            currentBlock = new Block(1);
+            currentBlock = new Block(num);
             currentBlock.X = 4;
             currentBlock.Y = -2;
         }
@@ -596,6 +580,9 @@ namespace TetrisProject
         
         public void moveBlock()
         {
+            drawPieceOnCoords(CurrBlock.X, CurrBlock.Y);
+            deleteTrailDown();
+            /*
             //we have a 10x18 field of zeros
             for(int y = 0; y < 15; y++)
             {
@@ -616,7 +603,7 @@ namespace TetrisProject
                                 if (currentBlock.Shape[by][bx] != 0)
                                 {
                                     field[currentY, currentX] = currentBlock.Shape[by][bx];
-                                    deleteTrailDown();
+                                    //deleteTrailDown();
 
                                 }
                                 currentX++;    
@@ -626,22 +613,45 @@ namespace TetrisProject
                     
                     }
                 }
-            }
+            } */
         }
 
         private void deleteTrailDown()
         {
-            
-            if (CurrBlock.Id == 1 && currentBlock.Pos == 0)
+            if (CurrBlock.Pos % 2 == 1 && CurrBlock.Id == 1)
+            {
+                if (CurrBlock.Y > 0)
+                {
+                    field[CurrBlock.Y - 1, CurrBlock.X] = 0;
+                }
+            }
+            else
+            {
+                deleteTrailRotate();
+            }
+
+            #region old
+            /*
+            if (CurrBlock.Id == 1)
             {
 
-                for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
+                if (CurrBlock.Pos % 2 == 0)
                 {
-                    if(field[CurrBlock.Y + 2, x] < 10)
-                        field[CurrBlock.Y+2, x] = 0;
+
+                    for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
+                    {
+                        if (field[CurrBlock.Y + 2, x] < 10)
+                            field[CurrBlock.Y + 2, x] = 0;
+                    }
                 }
-                
+                else
+                {
+                    if (field[CurrBlock.Y - 1, 0] < 10)
+                        field[CurrBlock.Y - 1, 0] = 0;
+                }
             }
+
+        
             else if (CurrBlock.Id == 2 && currentBlock.Pos == 0)
             {
                 if (field[CurrBlock.Y + 1, CurrBlock.X] < 10)
@@ -695,114 +705,27 @@ namespace TetrisProject
                     if (field[CurrBlock.Y + 1, x] < 10)
                         field[CurrBlock.Y + 1, x] = 0;
                 }
-            }
-
+            }*/
+            #endregion
         }
-
-        public bool checkBlockCollision()
+        private void deleteTrailRotate()
         {
-            bool collided = false;
+
             int width = CurrBlock.checkWidth();
-
-            if(CurrBlock.Y > 0 && CurrBlock.Y < 14)
+            //compeletely delete the peiece from the board
+            for (int y = 0; y < 4; y++)
             {
-                for (int y = CurrBlock.Y + 4; y > CurrBlock.Y+4 - y; y--)
+                for (int x = 0; x <4; x++)
                 {
-                    for (int x = CurrBlock.X; x < CurrBlock.X + width; x++)
-                    {
-                        if (Field[y, x] != 0)
-                        {
-                            if (Field[y - 1, x] != 0 && Field[y, x] != Field[y - 1, x])
-                                collided = true;
-                        }
-                    }
+                    if (CurrBlock.Y + y >=0 && CurrBlock.X +x <= 9 && Field[CurrBlock.Y + y, CurrBlock.X + x] < 10)
+                        Field[CurrBlock.Y + y, CurrBlock.X + x] = 0;
                 }
             }
-            if(CurrBlock.Y == 14)
-            {
-                collided = true;
-            }
-            if(collided)
-            {
-                for (int y = 0; y < 18; y++)
-                {
-                    for (int x = 0; x < 10; x++)
-                    {
-                        if (Field[y, x] > 0)
-                            Field[y, x] += 10;
-                    }
-                }
-            }
-            return collided;
+            //now redraw it with the oriantation
+            drawPieceOnCoords(CurrBlock.X, CurrBlock.Y);
+         
         }
-        public bool checkBlockCollisionToLeft()
-        {
-            bool collided = false;
-
-            if (CurrBlock.X > 0  && CurrBlock.Y > -1)
-            {
-                for (int x = CurrBlock.X - 1; x < CurrBlock.X + 2; x++)
-                {
-                    for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
-                    {                       
-                        if (Field[y,x] != 0)
-                        {
-                            if (Field[y, x-1] != 0 && Field[y,x] != Field[y, x-1])
-                                collided = true;
-                        }
-                    }
-                }
-            }
-            return collided;
-        }
-        public bool checkBlockCollisionToRight()
-        {
-            bool collided = false;
-
-            if (CurrBlock.X < 10 - CurrBlock.checkWidth() && CurrBlock.Y < 14 && CurrBlock.Y > -1)
-            {
-                for (int x = CurrBlock.X + CurrBlock.checkWidth()-1; x > CurrBlock.X-1; x--)
-                {
-                    for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
-                    {
-                        if (Field[y, x] != 0)
-                        {
-                            if (Field[y, x + 1] != 0 && Field[y, x] != Field[y, x + 1])
-                                collided = true;
-                        }
-                    }
-                }
-            }
-            return collided;
-        }
-        private void drawPieceOnCoords(int boardX, int boardY)
-        {
-            
-            for (int y = 0; y <= 3; y++)
-            {
-                
-                for (int x = 0; x < 4; x++)
-                {
-                    if (CurrBlock.Shape[y][x] != 0)
-                    {
-                        field[y + boardY, x + boardX] = CurrBlock.Shape[y][x];
-                    }
-                    
-                }
-                
-            }
-
-            if(boardY == -1)
-            {
-                deleteTrailDown();
-            for (int i = 0; i < 10; i++)
-                        {
-                            field[0, i] = 0;
-                        }
-            }
-            
-            
-        }
+        
 
         public bool rotateBlock(int direction)
         {
@@ -817,12 +740,12 @@ namespace TetrisProject
             CurrBlock.Rotate(-direction);
 
             //if the newwidth is not ganna fit dont rotate
-            if (newWidth > 10 - CurrBlock.X)
+            if (newWidth > 10 - CurrBlock.X || y <-1)
             {
                 return false;
             }
 
-
+            #region check to see if area i want to rotate to is avalible
             if (id == 1)
             {
                 if (newPostion % 2 == 0)
@@ -946,15 +869,17 @@ namespace TetrisProject
                         canRotate = false;
                 }
             }
+            #endregion
 
             if (canRotate)
+            {
                 CurrBlock.Rotate(direction);
+                deleteTrailRotate();
+                
+            }
             return canRotate;
 
         }
-
-
-
         public static int incrementPos(int pos, int direction)
         {
             int newPos = pos + direction;
@@ -966,6 +891,111 @@ namespace TetrisProject
                 newPos = 0;
             return newPos;
         }
-        
+
+        private void drawPieceOnCoords(int boardX, int boardY)
+        {
+            
+            for (int y = 0; y <= 3; y++)
+            {
+                
+                for (int x = 0; x < 4; x++)
+                {
+                    if (CurrBlock.Shape[y][x] != 0)
+                    {
+                        field[y + boardY, x + boardX] = CurrBlock.Shape[y][x];
+                    }
+                    
+                }
+                
+            }
+
+            if(boardY == -1)
+            {
+                //deleteTrailDown();
+                for (int i = 0; i < 10; i++)
+                {
+                    field[0, i] = 0;
+                }
+            }
+            
+            
+        }
+
+        public bool checkBlockCollision()
+        {
+            bool collided = false;
+            int width = CurrBlock.checkWidth();
+
+            if(CurrBlock.Y > 0 && CurrBlock.Y < 14)
+            {
+                for (int y = CurrBlock.Y + 4; y > CurrBlock.Y+4 - y; y--)
+                {
+                    for (int x = CurrBlock.X; x < CurrBlock.X + width; x++)
+                    {
+                        if (Field[y, x] != 0)
+                        {
+                            if (Field[y - 1, x] != 0 && Field[y, x] != Field[y - 1, x])
+                                collided = true;
+                        }
+                    }
+                }
+            }
+            if(CurrBlock.Y == 14)
+            {
+                collided = true;
+            }
+            if(collided)
+            {
+                for (int y = 0; y < 18; y++)
+                {
+                    for (int x = 0; x < 10; x++)
+                    {
+                        if (Field[y, x] > 0)
+                            Field[y, x] += 10;
+                    }
+                }
+            }
+            return collided;
+        }
+        public bool checkBlockCollisionToLeft()
+        {
+            bool collided = false;
+
+            if (CurrBlock.X > 0  && CurrBlock.Y > -1)
+            {
+                for (int x = CurrBlock.X - 1; x < CurrBlock.X + 2; x++)
+                {
+                    for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
+                    {                       
+                        if (Field[y,x] != 0)
+                        {
+                            if (Field[y, x-1] != 0 && Field[y,x] != Field[y, x-1])
+                                collided = true;
+                        }
+                    }
+                }
+            }
+            return collided;
+        }
+        public bool checkBlockCollisionToRight()
+        {
+            bool collided = false;
+
+            if (CurrBlock.X < 10 - CurrBlock.checkWidth() && CurrBlock.Y < 14 && CurrBlock.Y > -1)
+            {
+                for (int x = CurrBlock.X + CurrBlock.checkWidth()-1; x > CurrBlock.X-1; x--)
+                {
+                    for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
+                    {
+                        if (Field[y, x] != 0)
+                        {
+                            if (Field[y, x + 1] != 0 && Field[y, x] != Field[y, x + 1])
+                                collided = true;
+                        }
+                    }
+                }
+            }
+            return collided;
+        }
     }
 }

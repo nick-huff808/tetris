@@ -183,7 +183,7 @@ namespace TetrisProject
             if (rotation_direction == 1)
             {
                 pos++;
-                pos += pos % 4;
+                pos = pos % 4;
             }
             else
             {
@@ -193,6 +193,7 @@ namespace TetrisProject
                     pos--;
             }
 
+            #region differnt postions
             //if a line
             if (this.id == 1)
             {
@@ -362,6 +363,7 @@ namespace TetrisProject
                                           };
                 }
             }
+            #endregion
 
         }
 
