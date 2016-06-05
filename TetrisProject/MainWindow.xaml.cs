@@ -79,7 +79,7 @@ namespace TetrisProject
         {
             
             int pWidth = board.CurrBlock.checkWidth();
-            if(board.CurrBlock.Y == 14)
+            if (board.CurrBlock.Y == 14)
             {
                 return;
             }
@@ -96,15 +96,13 @@ namespace TetrisProject
                 }
                 board.moveBlock();
                 deleteTrailLeft();
-                    
-                    
             }
             else if (e.Key == Key.Right && board.checkBlockCollisionToRight() == false)
             {
 
-                if (board.CurrBlock.X >= 10 -pWidth)
+                if (board.CurrBlock.X >= 10 - pWidth)
                 {
-                    board.CurrBlock.X = 10-pWidth;
+                    board.CurrBlock.X = 10 - pWidth;
                 }
                 else
                 {
@@ -113,7 +111,50 @@ namespace TetrisProject
                 board.moveBlock();
                 deleteTrailRight();
             }
+            else if (e.Key == Key.Up)
+            {
+                if (board.rotateBlock(1))
+                {
+                    
+                    deleteTrailRotate();
+                }
+            }
+            else if (e.Key == Key.Down)
+            {
+                if (board.rotateBlock(-1))
+                {
+                    
+                    deleteTrailRotate();
+                }
+            }
             board.drawField(play_area);
+        }
+
+        private void deleteTrailRotate()
+        {
+            //compeletely delete the peiece from
+            for (int y = 0; y < 4; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    if (board.Field[board.CurrBlock.Y + y, board.CurrBlock.X + x] < 10)
+                        board.Field[board.CurrBlock.Y + y, board.CurrBlock.X + x] = 0;
+                }
+            }
+            //now redraw it with the oriantation
+            for (int y = 0; y <= 3; y++)
+            {
+
+                for (int x = 0; x < 4; x++)
+                {
+                    if (board.CurrBlock.Shape[y][x] != 0)
+                    {
+                        board.Field[board.CurrBlock.Y + y, board.CurrBlock.X + x] = board.CurrBlock.Shape[y][x];
+                    }
+
+                }
+
+            }
         }
 
         private void deleteTrailRight()
@@ -476,7 +517,7 @@ namespace TetrisProject
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            currentBlock = new Block(4);
+            currentBlock = new Block(1);
             currentBlock.X = 4;
             currentBlock.Y = -2;
         }
@@ -761,6 +802,169 @@ namespace TetrisProject
             }
             
             
+        }
+
+        public bool rotateBlock(int direction)
+        {
+            int id = CurrBlock.Id, pos = CurrBlock.Pos;
+            int newPostion = incrementPos(pos, direction);
+            bool canRotate = true;
+            int y = CurrBlock.Y, x = CurrBlock.X;
+
+            //get the width if i rotated
+            CurrBlock.Rotate(direction);
+            int newWidth = CurrBlock.checkWidth();
+            CurrBlock.Rotate(-direction);
+
+            //if the newwidth is not ganna fit dont rotate
+            if (newWidth > 10 - CurrBlock.X)
+            {
+                return false;
+            }
+
+
+            if (id == 1)
+            {
+                if (newPostion % 2 == 0)
+                {
+                    for (int i = 1; i < 4; i++)
+                    {
+                        if (Field[3 + y, i + x] != 0)
+                        {
+                            canRotate = false;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (Field[i + 3, 0 + x] != 0)
+                        {
+                            canRotate = false;
+                        }
+                    }
+                }
+            }
+            else if (id == 2)
+            {
+                if (pos == 0)
+                {
+                    if (field[y + 2, x + 0] > 10 || field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10 || field[y + 3, x + 2] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 1)
+                {
+                    if (field[y + 3, x + 0] > 10 || field[y + 2, x + 0] > 10 || field[y + 1, x + 0] > 10 || field[y + 1, x + 1] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 2)
+                {
+                    if (field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 2, x + 2] > 10 || field[y + 3, x + 2] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 3)
+                {
+                    if (field[y + 3, x + 0] > 10 || field[y + 1, x + 1] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10)
+                        canRotate = false;
+                }
+
+            }
+            else if (id == 3)
+            {
+                if (pos == 0)
+                {
+                    if (field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 2, x + 2] > 10 || field[y + 3, x + 0] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 1)
+                {
+                    if (field[y + 1, x + 0] > 10 || field[y + 2, x + 0] > 10 || field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 2)
+                {
+                    if (field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10 || field[y + 3, x + 2] > 10 || field[y + 2, x + 2] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 3)
+                {
+                    if (field[y + 1, x + 0] > 10 || field[y + 1, x + 1] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10)
+                        canRotate = false;
+                }
+
+
+            }
+            else if (id == 4)
+            {
+                if (pos % 2 == 0)
+                {
+                    if (field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10 || field[y + 2, x + 1] > 10 || field[y + 2, x + 2] > 10)
+                        canRotate = false;
+                }
+                else
+                {
+                    if (field[y + 1, x + 0] > 10 || field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10)
+                        canRotate = false;
+                }
+            }
+            else if (id == 5)
+            {
+                if (pos % 2 == 0)
+                {
+                    if (field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10 || field[y + 3, x + 2] > 10)
+                        canRotate = false;
+                }
+                else
+                {
+                    if (field[y + 2, x + 0] > 10 || field[y + 3, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 1, x + 1] > 10)
+                        canRotate = false;
+                }
+            }
+            else if (id == 6)
+                return false;
+            else if (id == 7)
+            {
+                if (pos == 0)
+                {
+                    if (field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 2, x + 2] > 10 || field[y + 3, x + 1] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 1)
+                {
+                    if (field[y + 1, x + 0] > 10 || field[y + 2, x + 0] > 10 || field[y + 3, x + 0] > 10 || field[y + 2, x + 1] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 2)
+                {
+                    if (field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10 || field[y + 3, x + 2] > 10 || field[y + 2, x + 1] > 10)
+                        canRotate = false;
+                }
+                else if (pos == 3)
+                {
+                    if (field[y + 2, x + 0] > 10 || field[y + 1, x + 1] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10)
+                        canRotate = false;
+                }
+            }
+
+            if (canRotate)
+                CurrBlock.Rotate(direction);
+            return canRotate;
+
+        }
+
+
+
+        public static int incrementPos(int pos, int direction)
+        {
+            int newPos = pos + direction;
+            if (newPos < 0)
+            {
+                newPos = 3;
+            }
+            else if (newPos == 4)
+                newPos = 0;
+            return newPos;
         }
         
     }

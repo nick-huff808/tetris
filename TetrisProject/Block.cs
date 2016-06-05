@@ -178,7 +178,7 @@ namespace TetrisProject
         }
 
 
-        private void Rotate(int rotation_direction)
+        public void Rotate(int rotation_direction)
         {
             if (rotation_direction == 1)
             {
