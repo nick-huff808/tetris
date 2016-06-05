@@ -22,8 +22,8 @@
         </DockPanel>
 
         <Label x:Name="next_block_label" Content="Next block" Grid.Column="1" HorizontalAlignment="Left" Margin="230.4,24,0,0" VerticalAlignment="Top" Width="133" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
-        <Label x:Name="score_label" Content="Lines" Grid.Column="1" HorizontalAlignment="Left" Margin="258.4,218,0,0" VerticalAlignment="Top" Width="67" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
-        <Label x:Name="score_label1" Content="Score" Grid.Column="1" HorizontalAlignment="Left" Margin="254.4,143,0,0" VerticalAlignment="Top" Width="76" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
+        <Label x:Name="lines_label" Content="Lines" Grid.Column="1" HorizontalAlignment="Left" Margin="258.4,218,0,0" VerticalAlignment="Top" Width="67" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
+        <Label x:Name="score_label" Content="Score" Grid.Column="1" HorizontalAlignment="Left" Margin="254.4,143,0,0" VerticalAlignment="Top" Width="76" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
         <Label x:Name="level_label" Content="Level" Grid.Column="1" HorizontalAlignment="Left" Margin="258.4,293,0,0" VerticalAlignment="Top" Width="67" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
         <TextBox x:Name="score_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,185,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
         <TextBox x:Name="lines_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,263,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>

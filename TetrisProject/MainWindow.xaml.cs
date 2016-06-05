@@ -34,7 +34,7 @@ namespace TetrisProject
             board.drawField(play_area);
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
-            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 550);
+            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 250);
             movementDownTimer.Start();
 
             
@@ -43,18 +43,24 @@ namespace TetrisProject
 
         private void downwardTick(object sender, EventArgs e)
         {
+            drawNextPiece(next_block_display, board.NextBlock);
+
             if(board.CurrBlock.Y == 14 || (board.CurrBlock.Y != 14 && board.checkBlockCollision() == true))
             {
+
                 board.checkBlockCollision();
-                board.chooseBlock();
+                board.checkForLineDeleteAndMove();
+
+                lines_text.Text = board.Lines + "";
+                score_text.Text = board.Score + "";
+
+                board.CurrBlock = board.NextBlock;
+                board.NextBlock = board.chooseBlock();
             }
             else
             {
                 board.CurrBlock.Y++;
                 board.moveBlock();
-                
-                
-
             }
             
             board.drawField(play_area);
@@ -407,9 +413,42 @@ namespace TetrisProject
                 }
             }
         }
-        
-    }
 
+        public void drawNextPiece(Canvas next_block_display, Block nextPiece)
+        {
+            for(int y = 0; y < 4; y++)
+            {
+                for(int x = 0; x < 4; x++)
+                {
+                    Color color = GameBoard.colorPick(nextPiece.Shape[y][x]);
+
+                    //Taken from a stack overflow forum
+                    Rectangle square = new Rectangle();
+                    if (nextPiece.Shape[y][x] != 0)
+                    {
+                        square.Stroke = new SolidColorBrush(Colors.White);
+                        square.StrokeThickness = 1;
+                    }
+
+                    if(nextPiece.Shape[y][x] == 0)
+                    {
+                        square.Fill = new SolidColorBrush(Color.FromRgb(46, 50, 30));
+                    }
+                    else
+                    {
+                        square.Fill = new SolidColorBrush(color);
+                    }
+                    square.Width = 20;
+                    square.Height = 20;
+                    Canvas.SetLeft(square, x * 19);
+                    Canvas.SetTop(square, y * 19);
+                    next_block_display.Children.Add(square);
+                }
+            }
+        }
+
+
+    }
 
     public class GameBoard
     {
@@ -417,6 +456,7 @@ namespace TetrisProject
         protected int[,] field;
         protected int score;
         protected int lines;
+        private Block nextBlock;
         protected Block currentBlock;
 
         #region properties
@@ -484,11 +524,26 @@ namespace TetrisProject
                 currentBlock = value;
             }
         }
+
+        public Block NextBlock
+        {
+            get
+            {
+                return nextBlock;
+            }
+
+            set
+            {
+                nextBlock = value;
+            }
+        }
         #endregion
-    
+
         public GameBoard()
         {
-            chooseBlock();
+            currentBlock = chooseBlock();
+            NextBlock = chooseBlock();
+
             currentBlock.Y = -2;
 
             field = new int[18,10];
@@ -496,16 +551,17 @@ namespace TetrisProject
             score = lines = 0;
 
         }
-        public void chooseBlock()
+        public Block chooseBlock()
         {
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            currentBlock = new Block(num);
-            currentBlock.X = 4;
-            currentBlock.Y = -2;
+            Block newBlock = new Block(num);
+            newBlock.X = 4;
+            newBlock.Y = -2;
+            return newBlock;
         }
-        public Color colorPick(int i)
+        public static Color colorPick(int i)
         {
             int id = i % 10;
 
@@ -576,7 +632,6 @@ namespace TetrisProject
             
             
         }
-
         
         public void moveBlock()
         {
@@ -934,7 +989,7 @@ namespace TetrisProject
                     {
                         if (Field[y, x] != 0)
                         {
-                            if (Field[y - 1, x] != 0 && Field[y, x] != Field[y - 1, x])
+                            if (Field[y - 1, x] != 0 && Field[y, x] > Field[y - 1, x])
                                 collided = true;
                         }
                     }
@@ -967,7 +1022,7 @@ namespace TetrisProject
                 {
                     for (int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
                     {                       
-                        if (Field[y,x] != 0)
+                        if (Field[y,x] != 0 && x > 0)
                         {
                             if (Field[y, x-1] != 0 && Field[y,x] != Field[y, x-1])
                                 collided = true;
@@ -996,6 +1051,37 @@ namespace TetrisProject
                 }
             }
             return collided;
+        }
+        
+        public void checkForLineDeleteAndMove()
+        {
+            bool isLine = true;
+            int lineAmount = 0;
+
+            for(int y = CurrBlock.Y; y < CurrBlock.Y + 4; y++)
+            {
+                isLine = true;
+                for (int x = 0; x < 10; x++)
+                {
+                    if (Field[y, x] == 0)
+                        isLine = false;
+                }
+                if (isLine == true)
+                {
+                    lineAmount++;
+                    this.lines++;
+
+                    for (int y2 = y; y2 > 0; y2--)
+                    {
+                        for(int x2 = 0; x2 < 10; x2++)
+                        {
+                            Field[y2, x2] = Field[y2 - 1, x2];
+                        }
+                    }
+                }
+            }
+            if(lineAmount > 0)
+                score += ((100 * lineAmount) + (50 * (lineAmount - 1))) * level;
         }
     }
 }
