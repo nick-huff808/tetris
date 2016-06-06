@@ -34,7 +34,7 @@ namespace TetrisProject
             board.drawField(play_area);
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
-            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 250);
+            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
             movementDownTimer.Start();
 
             
