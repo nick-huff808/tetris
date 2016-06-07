@@ -111,6 +111,7 @@ namespace TetrisProject
             pos = 0;
             X = 4;
             Y = -1;
+            #region setting id's
             if (id == 1)
             {
                 color = Colors.Blue;
@@ -166,14 +167,14 @@ namespace TetrisProject
             }
             else
             {
-                color = Colors.DarkGreen;
+                color = Colors.SandyBrown;
                 shape = new int[][] { new int[] { 0 ,0 ,0 ,0 },
                                       new int[] { 0 ,0 ,0 ,0 },
                                       new int[] { 7, 7, 7, 0 },
                                       new int[] { 0, 7, 0, 0 },
                                       };
             }
-
+            #endregion
 
         }
 
