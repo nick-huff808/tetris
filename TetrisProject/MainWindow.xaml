@@ -6,6 +6,54 @@
         xmlns:local="clr-namespace:TetrisProject"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="450" ResizeMode="CanMinimize" KeyDown="play_area_KeyDown">
+    <Window.Resources>
+        <RoutedUICommand x:Key="play" Text="Play">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture> CTRL + G</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="pause" Text="Pause">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>CTRL + P</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="newGame" Text="New Game">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>CTRL + N</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="save" Text="Save">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>CTRL + S</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+       
+        <RoutedUICommand x:Key="load" Text="Load Game">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>CTRL + L</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="controls" Text="Controls">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>CTRL + C</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="about" Text="About">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>CTRL + A</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+    </Window.Resources>
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource about}" Executed="About_Executed"/>
+        <CommandBinding Command="{StaticResource controls}" Executed="control_Help_Executed"/>
+        <CommandBinding Command="{StaticResource load}" Executed="load_game_Executed"/>
+        <CommandBinding Command="{StaticResource newGame}" Executed="new_game_Executed"/>
+        <CommandBinding Command="{StaticResource pause}" Executed="pause_Executed"/>
+        <CommandBinding Command="{StaticResource play}" Executed="play_Executed"/>
+        <CommandBinding Command="{StaticResource save}" Executed="save_Executed"/>
+    </Window.CommandBindings>
     <Grid Background="#FF2E323E" Margin="0,0,2,-8"  >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15*"/>
@@ -14,9 +62,18 @@
         <Canvas x:Name="play_area" HorizontalAlignment="Left" Height="360" Margin="10,24,0,-65" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2" Background="#FF743D3D" Focusable="True" />
         <DockPanel HorizontalAlignment="Left" Height="19" LastChildFill="False" Margin="0,0,0,0" VerticalAlignment="Top" Width="514" Grid.ColumnSpan="2">
             <Menu x:Name="menu" Height="19" VerticalAlignment="Top" Width="517">
-                <MenuItem Name="file" Header="File"></MenuItem>
+                <MenuItem Name="file" Header="File">
+                    <MenuItem Name="Save" Header="Save" Command="{StaticResource save}" IsEnabled="False"/>
+                    <MenuItem Name="load" Header="Load Game" Command="{StaticResource load}" IsEnabled="False"/>
+                </MenuItem>
+                <MenuItem Name="game" Header="Game">
+                    <MenuItem Name="newGame" Header="New Game" Command="{StaticResource newGame}"/>
+                    <MenuItem Name="pause" Header="Pause" Command="{StaticResource pause}"/>
+                    <MenuItem Name="play" Header="Play" Command="{StaticResource play}" IsEnabled="False"/>
+                </MenuItem>
                 <MenuItem Name="help"  Header="Help">
-                    <MenuItem Name="rules" Header="Rules"/>
+                    <MenuItem Name="ControlsRules" Header="Controls and Rules" Command="{StaticResource controls}"/>
+                    <MenuItem Name="about" Header="About" Command="{StaticResource about}"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
@@ -25,11 +82,12 @@
         <Label x:Name="lines_label" Content="Lines" Grid.Column="1" HorizontalAlignment="Left" Margin="258.4,218,0,0" VerticalAlignment="Top" Width="67" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
         <Label x:Name="score_label" Content="Score" Grid.Column="1" HorizontalAlignment="Left" Margin="254.4,143,0,0" VerticalAlignment="Top" Width="76" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
         <Label x:Name="level_label" Content="Level" Grid.Column="1" HorizontalAlignment="Left" Margin="258.4,293,0,0" VerticalAlignment="Top" Width="67" Height="45" FontFamily="Comic Sans MS" FontSize="24" Foreground="Blue"/>
-        <TextBox x:Name="score_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,185,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
-        <TextBox x:Name="lines_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,263,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
-        <TextBox x:Name="level_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,338,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green"/>
+        <TextBox x:Name="score_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,185,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green" IsEnabled="False"/>
+        <TextBox x:Name="lines_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,263,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green" IsEnabled="False"/>
+        <TextBox x:Name="level_text" Grid.Column="1" HorizontalAlignment="Left" Height="36" Margin="246.4,338,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="92"  Background="#FF2E323E" FontFamily="Comic Sans MS" FontSize="22" IsReadOnly="True" TextAlignment="Center" Foreground="Green" IsEnabled="False"/>
         <Canvas x:Name="next_block_display" Grid.Column="1" HorizontalAlignment="Left" Height="80" Margin="230.4,68,0,0" VerticalAlignment="Top" Width="140" Background="#FF2E321E"/>
         <Button x:Name="pause_button" Content="Pause" Grid.Column="1" HorizontalAlignment="Left" Margin="254.4,377,0,0" VerticalAlignment="Top" Width="75" Click="pause_button_Click" FontFamily="Comic Sans MS" FontSize="14" Foreground="Blue"/>
+        <TextBox x:Name="high_score_text" Grid.Column="1" HorizontalAlignment="Left" Height="19" Margin="151,424,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="95" IsEnabled="False"/>
 
     </Grid>
 </Window>

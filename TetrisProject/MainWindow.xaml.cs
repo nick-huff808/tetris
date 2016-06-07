@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+using System.IO;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
@@ -21,6 +15,9 @@ namespace TetrisProject
     /// todo: get colitions all the way to the top
     /// Todo: add keyboard short cuts
     /// Todo: fix L piece collision
+    /// Todo: add spacebar dropping block to bottom
+    /// Todo: add cheat with HOME to go up level
+    /// Todo: create custom icon
     /// 
     /// Interaction logic for MainWindow.xaml
     /// the board is 10x18
@@ -32,6 +29,7 @@ namespace TetrisProject
         private DispatcherTimer movementDownTimer;
         
         private bool paused = false;
+        bool lost = false;
 
         GameBoard board;
         int TIMER_SPEED = 54;
@@ -40,8 +38,6 @@ namespace TetrisProject
             InitializeComponent();
             movementDownTimer = new DispatcherTimer();
             board = new GameBoard(next_block_display);
-            board.drawField(play_area);
-            //Keyboard.Focus(this.play_area);
 
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
@@ -57,6 +53,7 @@ namespace TetrisProject
 
             if (board.checkBlockCollisionDown() && board.CurrBlock.Y < 0)
             {
+                lost = true;
                 board.lose();
                 TIMER_SPEED = 500;
                 level_text.Text = "LOST";
@@ -72,6 +69,7 @@ namespace TetrisProject
                 {
                     board.levelUp();
                     TIMER_SPEED = (int)(TIMER_SPEED * .25);
+                    movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
                     level_text.Text = board.Level + "";
                 }
 
@@ -91,19 +89,28 @@ namespace TetrisProject
 
         private void pause_button_Click(object sender, RoutedEventArgs e)
         {
-            if(paused == true)
+            paused = !paused;
+            if (paused == true)
             {
-                movementDownTimer.Start();
-                pause_button.Content = "Pause";
-                paused = false;
-                //Keyboard.Focus(this);
+                movementDownTimer.Stop();
+                play.IsEnabled = true;
+                pause.IsEnabled = false;
+                Save.IsEnabled = true;
+                
+                load.IsEnabled = true;
+                pause_button.Content = "Resume";
+                
+                
 
             }
             else
             {
-                movementDownTimer.Stop();
-                pause_button.Content = "Resume";
-                paused = true;
+                movementDownTimer.Start();
+                play.IsEnabled = false;
+                pause.IsEnabled = true;
+                Save.IsEnabled = false;
+                load.IsEnabled = false;
+                pause_button.Content = "Pause";
             }
 
         }
@@ -117,13 +124,13 @@ namespace TetrisProject
                 return;
             }
             #region left and right movement
-            else if (e.Key == Key.Left && board.checkBlockCollisionToLeft() == false && board.CurrBlock.X != 0)
+            else if (e.Key == Key.Left && board.checkBlockCollisionToLeft() == false && board.CurrBlock.X != 0 && !lost)
             {
                 board.CurrBlock.X--;
                 board.moveBlock();
                 deleteTrailIfMovingLeft();
             }
-            else if (e.Key == Key.Right && board.checkBlockCollisionToRight() == false && board.CurrBlock.X + pWidth != 10)
+            else if (e.Key == Key.Right && board.checkBlockCollisionToRight() == false && board.CurrBlock.X + pWidth != 10 && !lost)
             {
 
                 board.CurrBlock.X++;
@@ -424,9 +431,84 @@ namespace TetrisProject
                 }
             
         }
-        
-        
 
+        #region keyboard functions 
+        private void About_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            pause_Executed(sender, e);
+            MessageBox.Show("Adam Dodgen and Nick Huff" + Environment.NewLine + "CSCD 371" + Environment.NewLine + "CPU: any" + Environment.NewLine + "Target Framework: 4.5.2");
+        }
+        private void play_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (play.IsEnabled)
+            {
+                pause_button_Click(sender, e);
+                
+                
+            }
+        }
+        private void pause_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (pause.IsEnabled)
+            {
+                pause_button_Click(sender, e);
+              
+                
+            }
+        
+        }
+        private void control_Help_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
+        private void new_game_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (newGame.IsEnabled)
+            {
+                board = new GameBoard(next_block_display);
+                board.drawField(play_area);
+                movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED = 500);
+
+                pause_button.Content = "Pause";
+                lines_text.Text = "0";
+                level_text.Text = "1";
+                score_text.Text = "0";
+                play.IsEnabled = false;
+                pause.IsEnabled = true;
+                Save.IsEnabled = false;
+                
+                load.IsEnabled = false;
+            }
+        }
+        //following 2 functions are wrtien with help from MSDN
+        private void save_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //check to see if file exists and if it doesnt create it
+            if (!File.Exists("Tetris.txt"))
+            {
+                File.CreateText("Tetris.txt");
+            }
+            StreamWriter file = new StreamWriter("Tetris.txt");
+
+            //write high score and game to the file
+            file.WriteLine(this.high_score_text.Text);
+            for (int y = 0; y < 18; y++)
+            {
+                for(int x =0; x< 10; x++)
+                {
+                    file.Write(board.Field[y, x] % 10);
+                }
+                file.WriteLine();
+            }
+            file.Close();
+            MessageBox.Show("game saved");
+        }
+        private void load_game_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
+
+        #endregion
     }
 
     public class GameBoard
@@ -524,10 +606,7 @@ namespace TetrisProject
             currentBlock = chooseBlock();
             Random rand = new Random();
             this.NextBlock = new Block(rand.Next(1,8) +1 %7);
-            displayNextPiece(nextDisplay = c);
-
-            currentBlock.Y = -2;
-
+            displayNextPiece(nextDisplay = c);     
             field = new int[18,10];
             level = 1;
             score = lines = 0;
@@ -1064,10 +1143,8 @@ namespace TetrisProject
             displayNextPiece(nextDisplay);
         }
 
-        public void levelUp()
+        public void clearField()
         {
-
-            //clear field
             for (int y = 0; y < 18; y++)
             {
                 for (int x = 0; x < 10; x++)
@@ -1075,6 +1152,12 @@ namespace TetrisProject
                     field[y, x] = 0;
                 }
             }
+        }
+
+        public void levelUp()
+        {
+
+            clearField();
             drawPieceOnCoords(CurrBlock.X, CurrBlock.Y);
             Lines = 0;
             level++;
