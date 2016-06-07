@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisProject"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="450" ResizeMode="CanMinimize" KeyDown="play_area_KeyDown">
+        Title="MainWindow" Height="500" Width="450" ResizeMode="CanMinimize" KeyDown="play_area_KeyDown" Icon ="tetris_logo.ico">
     <Window.Resources>
         <RoutedUICommand x:Key="play" Text="Play">
             <RoutedUICommand.InputGestures>
@@ -51,7 +51,7 @@
         <CommandBinding Command="{StaticResource load}" Executed="load_game_Executed"/>
         <CommandBinding Command="{StaticResource newGame}" Executed="new_game_Executed"/>
         <CommandBinding Command="{StaticResource pause}" Executed="pause_Executed"/>
-        <CommandBinding Command="{StaticResource play}" Executed="play_Executed"/>
+        <CommandBinding Command="{StaticResource play}" Executed="resume_Executed"/>
         <CommandBinding Command="{StaticResource save}" Executed="save_Executed"/>
     </Window.CommandBindings>
     <Grid Background="#FF2E323E" Margin="0,0,2,-8"  >
@@ -91,3 +91,4 @@
 
     </Grid>
 </Window>
+

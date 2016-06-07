@@ -15,12 +15,7 @@ namespace TetrisProject
 {
     /// <summary>
     /// TODO: try solve mem leak (move shit out the tick)
-    /// todo: get colitions all the way to the top
     /// Todo: add keyboard short cuts
-    /// Todo: fix L piece collision
-    /// Todo: add spacebar dropping block to bottom
-    /// Todo: add cheat with HOME to go up level
-    /// Todo: create custom icon
     /// 
     /// Interaction logic for MainWindow.xaml
     /// the board is 10x18
@@ -35,7 +30,7 @@ namespace TetrisProject
         bool lost = false;
 
         GameBoard board;
-        int TIMER_SPEED = 54;
+        int TIMER_SPEED = 111;
         public MainWindow()
         {
             InitializeComponent();
@@ -46,7 +41,6 @@ namespace TetrisProject
             movementDownTimer.Tick += new EventHandler(downwardTick);
             movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
             movementDownTimer.Start();
-
 
         }
 
@@ -71,7 +65,7 @@ namespace TetrisProject
                 if (board.Lines >= 10)
                 {
                     board.levelUp();
-                    TIMER_SPEED = (int)(TIMER_SPEED * .25);
+                    TIMER_SPEED = (int)(TIMER_SPEED * .75);
                     movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
                     level_text.Text = board.Level + "";
                 }
@@ -153,7 +147,7 @@ namespace TetrisProject
             else if (e.Key == Key.Home)
             {
                 board.levelUp();
-                TIMER_SPEED = (int)(TIMER_SPEED * .25);
+                TIMER_SPEED = (int)(TIMER_SPEED * .75);
                 movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
                 level_text.Text = board.Level + "";
             }
@@ -179,8 +173,6 @@ namespace TetrisProject
 
             board.drawField(play_area);
         }
-
-       
 
         private void deleteTrailIfMovingRight()
         {
@@ -454,15 +446,14 @@ namespace TetrisProject
         private void About_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             pause_Executed(sender, e);
-            MessageBox.Show("Adam Dodgen and Nick Huff" + Environment.NewLine + "CSCD 371" + Environment.NewLine + "CPU: any" + Environment.NewLine + "Target Framework: 4.5.2");
+            Custom_Message_Box wi = new Custom_Message_Box("Adam Dodgen and Nick Huff" + Environment.NewLine + "CSCD 371" + Environment.NewLine + "CPU: any" + Environment.NewLine + "Target Framework: 4.5.2", "About");
+            wi.Show();
         }
-        private void play_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void resume_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (play.IsEnabled)
             {
-                pause_button_Click(sender, e);
-                
-                
+                pause_button_Click(sender, e);                
             }
         }
         private void pause_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -496,11 +487,13 @@ namespace TetrisProject
                 Save.IsEnabled = false;
                 
                 load.IsEnabled = false;
+                movementDownTimer.Start();
             }
         }
         //following 2 functions are wrtien with help from MSDN
         private void save_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            Custom_Message_Box w1 = new Custom_Message_Box("", "");
             if (Save.IsEnabled)
             {
                 //check to see if file exists and if it doesnt create it
@@ -513,56 +506,93 @@ namespace TetrisProject
                     StreamWriter file = new StreamWriter("Tetris.txt");
 
                     //write high score and game to the file
-                    file.WriteLine(this.high_score_text.Text);
+                    file.WriteLine(high_score_text.Text);
+                    file.WriteLine(lines_text.Text);
+                    file.WriteLine(score_text.Text);
+                    file.WriteLine(level_text.Text);
+
                     for (int y = 0; y < 18; y++)
                     {
                         for (int x = 0; x < 10; x++)
                         {
-                            file.Write(board.Field[y, x] % 10);
+                            if (board.Field[y, x] < 10)
+                                file.Write(0);
+                            else
+                                file.Write(board.Field[y, x] % 10);
                         }
                         file.WriteLine();
                     }
                     file.Close();
-                    MessageBox.Show("game saved");
+                    w1 = new Custom_Message_Box("game saved", "Save");
+                    w1.Show();
                 }
                 catch
                 {
-                    MessageBox.Show("failed to save game");
+                    w1 = new Custom_Message_Box("failed to save game", "Save");
+                    w1.Show();
                 }
             }
         }
         private void load_game_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            Custom_Message_Box w1 = new Custom_Message_Box("","");
             if (load.IsEnabled)
             {
                 try
                 {
                     if (!File.Exists("Tetris.txt"))
                     {
-                        MessageBox.Show("No game to load");
+                        w1 = new Custom_Message_Box("No game to load", "Load");
+                        w1.Show();
                         return;
                     }
                     //open the file
                     StreamReader file = new StreamReader("Tetris.txt");
                     //load old high score
                     high_score_text.Text = file.ReadLine();
+                    lines_text.Text = file.ReadLine();
+                    board.Lines = Int32.Parse(lines_text.Text);
+
+                    score_text.Text = file.ReadLine();
+                    board.Score = Int32.Parse(score_text.Text);
+
+                    level_text.Text = file.ReadLine();
+                    board.Level = Int32.Parse(level_text.Text);
+
+                    TIMER_SPEED = (int)(500 * .75 * board.Level);
+
                     //fill in the board
                     for (int y = 0; y < 18; y++)
                     {
                         for (int x = 0; x < 10; x++)
                         {
-                            board.Field[y, x] = file.Read() +10;
+                            char c = (char)file.Read();
+                            int num = c - '0';
+                            if (num != 0)
+                            {
+
+                                board.Field[y, x] = num + 10;
+                            }
+                            else
+                                board.Field[y, x] = 0;
                         }
-                        file.Read();
+                        file.ReadLine();
                     }
                     file.Close();
-                    MessageBox.Show("game loaded");
 
+                    board.moveToNextPeice();
+                    Random rand = new Random();
+                    board.NextBlock = new Block(rand.Next(1, 7));
 
+                    w1 = new Custom_Message_Box("game loaded", "Load");
+                    w1.Show();
+
+                    board.drawField(play_area);
                 }
                 catch
                 {
-                    MessageBox.Show("No game to load");
+                    w1 = new Custom_Message_Box("no game to load", "Load");
+                    w1.Show();
                 }
             }
         }
