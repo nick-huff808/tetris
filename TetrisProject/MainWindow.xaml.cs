@@ -1,5 +1,8 @@
 ﻿using System;
 
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.IO;
@@ -139,6 +142,21 @@ namespace TetrisProject
             }
 
             #endregion
+            else if (e.Key == Key.Space)
+            {
+                while (board.checkBlockCollisionDown() == false)
+                {
+                    board.CurrBlock.Y++;
+                    board.moveBlock();
+                }
+            }
+            else if (e.Key == Key.Home)
+            {
+                board.levelUp();
+                TIMER_SPEED = (int)(TIMER_SPEED * .25);
+                movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
+                level_text.Text = board.Level + "";
+            }
 
             #region rotational movement
             else if (e.Key == Key.Up)
@@ -483,29 +501,70 @@ namespace TetrisProject
         //following 2 functions are wrtien with help from MSDN
         private void save_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //check to see if file exists and if it doesnt create it
-            if (!File.Exists("Tetris.txt"))
+            if (Save.IsEnabled)
             {
-                File.CreateText("Tetris.txt");
-            }
-            StreamWriter file = new StreamWriter("Tetris.txt");
-
-            //write high score and game to the file
-            file.WriteLine(this.high_score_text.Text);
-            for (int y = 0; y < 18; y++)
-            {
-                for(int x =0; x< 10; x++)
+                //check to see if file exists and if it doesnt create it
+                try
                 {
-                    file.Write(board.Field[y, x] % 10);
+                    if (!File.Exists("Tetris.txt"))
+                    {
+                        File.CreateText("Tetris.txt");
+                    }
+                    StreamWriter file = new StreamWriter("Tetris.txt");
+
+                    //write high score and game to the file
+                    file.WriteLine(this.high_score_text.Text);
+                    for (int y = 0; y < 18; y++)
+                    {
+                        for (int x = 0; x < 10; x++)
+                        {
+                            file.Write(board.Field[y, x] % 10);
+                        }
+                        file.WriteLine();
+                    }
+                    file.Close();
+                    MessageBox.Show("game saved");
                 }
-                file.WriteLine();
+                catch
+                {
+                    MessageBox.Show("failed to save game");
+                }
             }
-            file.Close();
-            MessageBox.Show("game saved");
         }
         private void load_game_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (load.IsEnabled)
+            {
+                try
+                {
+                    if (!File.Exists("Tetris.txt"))
+                    {
+                        MessageBox.Show("No game to load");
+                        return;
+                    }
+                    //open the file
+                    StreamReader file = new StreamReader("Tetris.txt");
+                    //load old high score
+                    high_score_text.Text = file.ReadLine();
+                    //fill in the board
+                    for (int y = 0; y < 18; y++)
+                    {
+                        for (int x = 0; x < 10; x++)
+                        {
+                            board.Field[y, x] = file.Read() +10;
+                        }
+                        file.Read();
+                    }
+                    file.Close();
+                    MessageBox.Show("game loaded");
 
+
+                }
+                catch
+                {
+                    MessageBox.Show("No game to load");
+                }
+            }
         }
 
         #endregion
