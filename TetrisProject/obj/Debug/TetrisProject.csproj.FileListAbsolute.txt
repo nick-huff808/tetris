@@ -12,17 +12,3 @@ D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetri
 D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetris\TetrisProject\obj\Debug\TetrisProject.g.resources
 D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetris\TetrisProject\obj\Debug\TetrisProject.Properties.Resources.resources
 D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetris\TetrisProject\obj\Debug\TetrisProject.csproj.GenerateResource.Cache
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\bin\Debug\TetrisProject.exe.config
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.exe
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.pdb
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\bin\Debug\TetrisProject.exe
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\bin\Debug\TetrisProject.pdb
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.csprojResolveAssemblyReference.cache
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\MainWindow.g.cs
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\App.g.cs
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject_MarkupCompile.cache
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject_MarkupCompile.lref
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\MainWindow.baml
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.g.resources
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.Properties.Resources.resources
-C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.csproj.GenerateResource.Cache

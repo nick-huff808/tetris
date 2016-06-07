@@ -17,45 +17,65 @@ using System.Windows.Threading;
 namespace TetrisProject
 {
     /// <summary>
+    /// TODO: try solve mem leak (move shit out the tick)
+    /// todo: get colitions all the way to the top
+    /// Todo: add keyboard short cuts
+    /// Todo: figure something out for the pause
+    /// 
+    /// 
     /// Interaction logic for MainWindow.xaml
     /// the board is 10x18
     /// where each square is 20x 20 pixels 
     /// </summary>
+
     public partial class MainWindow : Window
     {
-        private DispatcherTimer movementDownTimer = new DispatcherTimer();
-        private DispatcherTimer movementSideTimer = new DispatcherTimer();
+        private DispatcherTimer movementDownTimer;
+        
         private bool paused = true;
-        GameBoard board = new GameBoard();
 
+        GameBoard board;
+        int TIMER_SPEED = 200;
         public MainWindow()
         {
-            InitializeComponent();          
+            InitializeComponent();
+            movementDownTimer = new DispatcherTimer();
+            board = new GameBoard(next_block_display);
             board.drawField(play_area);
+            //Keyboard.Focus(this.play_area);
+
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
-            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
             movementDownTimer.Start();
 
-            
+
         }
 
 
         private void downwardTick(object sender, EventArgs e)
         {
-            drawNextPiece(next_block_display, board.NextBlock);
+           
 
-            if(board.CurrBlock.Y == 14 || (board.CurrBlock.Y != 14 && board.checkBlockCollision() == true))
+            if(board.checkBlockCollision())
             {
 
-                board.checkBlockCollision();
+                
                 board.checkForLineDeleteAndMove();
+                board.moveTooNextPeice();
+                
+                //check to see if level up and if yes do it
+                if (board.Lines >= 10)
+                {
+                    board.levelUp();
+                    TIMER_SPEED = (int)(TIMER_SPEED * .25);
+                    level_text.Text = board.Level + "";
+                }
 
                 lines_text.Text = board.Lines + "";
                 score_text.Text = board.Score + "";
 
-                board.CurrBlock = board.NextBlock;
-                board.NextBlock = board.chooseBlock();
+
             }
             else
             {
@@ -66,6 +86,8 @@ namespace TetrisProject
             board.drawField(play_area);
         }
 
+        
+
         private void pause_button_Click(object sender, RoutedEventArgs e)
         {
             if(paused == true)
@@ -73,6 +95,8 @@ namespace TetrisProject
                 movementDownTimer.Start();
                 pause_button.Content = "Pause";
                 paused = false;
+                //Keyboard.Focus(this);
+
             }
             else
             {
@@ -126,19 +150,19 @@ namespace TetrisProject
             #region rotational movement
             else if (e.Key == Key.Up)
             {
-                if (board.CurrBlock.Y >= 0)
-                {
+                //if (board.CurrBlock.Y >= 0)
+                //{
                     board.rotateBlock(1);
                     
-                }
+                //}
             }
             else if (e.Key == Key.Down)
             {
-                if (board.CurrBlock.Y >= 0)
-                {
+                //if (board.CurrBlock.Y >= 0)
+                //{
 
                     board.rotateBlock(-1);
-                }
+                //}
             }
             #endregion
 
@@ -413,40 +437,8 @@ namespace TetrisProject
                 }
             }
         }
-
-        public void drawNextPiece(Canvas next_block_display, Block nextPiece)
-        {
-            for(int y = 0; y < 4; y++)
-            {
-                for(int x = 0; x < 4; x++)
-                {
-                    Color color = GameBoard.colorPick(nextPiece.Shape[y][x]);
-
-                    //Taken from a stack overflow forum
-                    Rectangle square = new Rectangle();
-                    if (nextPiece.Shape[y][x] != 0)
-                    {
-                        square.Stroke = new SolidColorBrush(Colors.White);
-                        square.StrokeThickness = 1;
-                    }
-
-                    if(nextPiece.Shape[y][x] == 0)
-                    {
-                        square.Fill = new SolidColorBrush(Color.FromRgb(46, 50, 30));
-                    }
-                    else
-                    {
-                        square.Fill = new SolidColorBrush(color);
-                    }
-                    square.Width = 20;
-                    square.Height = 20;
-                    Canvas.SetLeft(square, x * 19);
-                    Canvas.SetTop(square, y * 19);
-                    next_block_display.Children.Add(square);
-                }
-            }
-        }
-
+        
+        
 
     }
 
@@ -458,6 +450,7 @@ namespace TetrisProject
         protected int lines;
         private Block nextBlock;
         protected Block currentBlock;
+        private Canvas nextDisplay;
 
         #region properties
         public int Level
@@ -539,10 +532,12 @@ namespace TetrisProject
         }
         #endregion
 
-        public GameBoard()
+        public GameBoard(Canvas c)
         {
             currentBlock = chooseBlock();
-            NextBlock = chooseBlock();
+            Random r = new Random();
+            this.NextBlock = new Block(1);//r.Next(1,8) +1 %5);
+            drawNextPiece(nextDisplay = c);
 
             currentBlock.Y = -2;
 
@@ -556,9 +551,13 @@ namespace TetrisProject
             Random rand = new Random();
             int num = rand.Next(1, 8);
 
-            Block newBlock = new Block(num);
+            Block newBlock = new Block(1);
+            if(num==1)
+                newBlock.Y = -3;
+            else
+                newBlock.Y = -2;
             newBlock.X = 4;
-            newBlock.Y = -2;
+            
             return newBlock;
         }
         public static Color colorPick(int i)
@@ -637,38 +636,8 @@ namespace TetrisProject
         {
             drawPieceOnCoords(CurrBlock.X, CurrBlock.Y);
             deleteTrailDown();
-            /*
-            //we have a 10x18 field of zeros
-            for(int y = 0; y < 15; y++)
-            {
-                
-                for (int x = 0; x < 10; x++)
-                {
-                    
-                    if (x == CurrBlock.X && y == CurrBlock.Y)
-                    {
-                        int currentY = y;
-                        for (int by = 0; by < 4; by++)
-                        {
-                            
-                            int currentX = x;
-                            for (int bx = 0; bx < 4; bx++)
-                            {
-                                
-                                if (currentBlock.Shape[by][bx] != 0)
-                                {
-                                    field[currentY, currentX] = currentBlock.Shape[by][bx];
-                                    //deleteTrailDown();
-
-                                }
-                                currentX++;    
-                            }
-                            currentY++;
-                        }
-                    
-                    }
-                }
-            } */
+            
+            
         }
 
         private void deleteTrailDown()
@@ -789,13 +758,14 @@ namespace TetrisProject
             bool canRotate = true;
             int y = CurrBlock.Y, x = CurrBlock.X;
 
-            //get the width if i rotated
+            //get the heigth and width if i rotated
             CurrBlock.Rotate(direction);
             int newWidth = CurrBlock.checkWidth();
+            int newHeight = CurrBlock.checkHeight();
             CurrBlock.Rotate(-direction);
 
             //if the newwidth is not ganna fit dont rotate
-            if (newWidth > 10 - CurrBlock.X || y <-1)
+            if (newWidth > 10 - CurrBlock.X ||(newHeight > CurrBlock.Y +4))
             {
                 return false;
             }
@@ -805,23 +775,13 @@ namespace TetrisProject
             {
                 if (newPostion % 2 == 0)
                 {
-                    for (int i = 1; i < 4; i++)
-                    {
-                        if (Field[3 + y, i + x] != 0)
-                        {
-                            canRotate = false;
-                        }
-                    }
+                    if (field[y + 0, x + 3] > 10 || field[y + 1, x + 3] > 10 || field[y + 2, x + 3] > 10 || field[y + 3, x + 3] > 10)
+                        canRotate = false;
                 }
                 else
                 {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        if (Field[i + 3, 0 + x] != 0)
-                        {
-                            canRotate = false;
-                        }
-                    }
+                    if (field[y + 0, x + 0] > 10 || field[y + 1, x + 0] > 10 || field[y + 2, x + 0] > 10 || field[y + 3, x + 0] > 10)
+                        canRotate = false;
                 }
             }
             else if (id == 2)
@@ -963,16 +923,6 @@ namespace TetrisProject
                 }
                 
             }
-
-            if(boardY == -1)
-            {
-                //deleteTrailDown();
-                for (int i = 0; i < 10; i++)
-                {
-                    field[0, i] = 0;
-                }
-            }
-            
             
         }
 
@@ -980,6 +930,7 @@ namespace TetrisProject
         {
             bool collided = false;
             int width = CurrBlock.checkWidth();
+            int height = CurrBlock.checkHeight();
 
             if(CurrBlock.Y > 0 && CurrBlock.Y < 14)
             {
@@ -1001,6 +952,7 @@ namespace TetrisProject
             }
             if(collided)
             {
+                //set the board to stone so we know what squares were currently there for the next current block
                 for (int y = 0; y < 18; y++)
                 {
                     for (int x = 0; x < 10; x++)
@@ -1009,7 +961,9 @@ namespace TetrisProject
                             Field[y, x] += 10;
                     }
                 }
+                
             }
+            
             return collided;
         }
         public bool checkBlockCollisionToLeft()
@@ -1071,6 +1025,7 @@ namespace TetrisProject
                     lineAmount++;
                     this.lines++;
 
+                    //move everything above that line down
                     for (int y2 = y; y2 > 0; y2--)
                     {
                         for(int x2 = 0; x2 < 10; x2++)
@@ -1082,6 +1037,63 @@ namespace TetrisProject
             }
             if(lineAmount > 0)
                 score += ((100 * lineAmount) + (50 * (lineAmount - 1))) * level;
+        }
+
+        public void drawNextPiece(Canvas next_block_display)
+        {
+            for (int y = 0; y < 4; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    Color color = GameBoard.colorPick(this.nextBlock.Shape[y][x]);
+
+                    //Taken from a stack overflow forum
+                    Rectangle square = new Rectangle();
+                    if (this.nextBlock.Shape[y][x] != 0)
+                    {
+                        square.Stroke = new SolidColorBrush(Colors.White);
+                        square.StrokeThickness = 1;
+                    }
+
+                    if (this.nextBlock.Shape[y][x] == 0)
+                    {
+                        square.Fill = new SolidColorBrush(Color.FromRgb(46, 50, 30));
+                    }
+                    else
+                    {
+                        square.Fill = new SolidColorBrush(color);
+                    }
+                    square.Width = 20;
+                    square.Height = 20;
+                    Canvas.SetLeft(square, x * 19);
+                    Canvas.SetTop(square, y * 19);
+                    next_block_display.Children.Add(square);
+                }
+            }
+        }
+
+        public void moveTooNextPeice()
+        {
+            CurrBlock = this.nextBlock;
+            this.nextBlock = chooseBlock();
+            drawNextPiece(nextDisplay);
+        }
+
+        public void levelUp()
+        {
+
+            //clear field
+            for (int y = 0; y < 18; y++)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    field[y, x] = 0;
+                }
+            }
+            drawPieceOnCoords(CurrBlock.X, CurrBlock.Y);
+            Lines = 0;
+            level++;
+
         }
     }
 }

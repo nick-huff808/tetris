@@ -164,7 +164,7 @@ namespace TetrisProject
                                       new int[] { 6 ,6 ,0 ,0 },
                                       new int[] { 6 ,6 ,0 ,0 }};
             }
-            else if (id == 7)
+            else
             {
                 color = Colors.DarkGreen;
                 shape = new int[][] { new int[] { 0 ,0 ,0 ,0 },
@@ -419,6 +419,62 @@ namespace TetrisProject
                     return 3;
                 else
                     return 2;
+            }
+            return 0;
+        }
+
+        public int checkHeight()
+        {
+            int id = Id;
+            int position = Pos;
+
+            if (id == 1)
+            {
+                if (position == 1 || position == 3)
+                {
+                    return 4;
+                }
+                else
+                    return 1;
+            }
+            else if (id == 2)
+            {
+                if (position % 2 == 0)
+                    return 2;
+                else
+                    return 3;
+            }
+            else if (id == 3)
+            {
+                if (position % 2 == 0)
+                    return 2;
+                else
+                    return 3;
+            }
+            else if (id == 4)
+            {
+                if (position % 2 == 0)
+                    return 2;
+                else
+                    return 3;
+            }
+            else if (id == 5)
+            {
+                if (position % 2 == 0)
+                    return 2;
+                else
+                    return 3;
+            }
+            else if (id == 6)
+            {
+                return 2;
+            }
+            else if (id == 7)
+            {
+                if (position % 2 == 0)
+                    return 2;
+                else
+                    return 3;
             }
             return 0;
         }
