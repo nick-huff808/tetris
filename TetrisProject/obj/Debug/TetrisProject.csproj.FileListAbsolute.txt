@@ -28,3 +28,5 @@ C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.Prop
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\TetrisProject.csproj.GenerateResource.Cache
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\Window1.g.cs
 C:\Users\Adam_2\Desktop\Tetris\tetris\TetrisProject\obj\Debug\Window1.baml
+D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetris\TetrisProject\obj\Debug\Window1.g.cs
+D:\documents\Visual Studio 2015\TetrisProject\sourse control\tetris-master\tetris\TetrisProject\obj\Debug\Window1.baml

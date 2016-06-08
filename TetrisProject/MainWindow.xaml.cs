@@ -1,8 +1,4 @@
 ﻿using System;
-
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.IO;
@@ -14,10 +10,7 @@ using System.Windows.Threading;
 namespace TetrisProject
 {
     /// <summary>
-    /// Todo: add keyboard short cuts
-    /// Todo: implement high score
-    /// fix losing/winning/leveling up
-    /// blocks enter at random rotation
+    /// fix losing/leveling up
     /// 
     /// Interaction logic for MainWindow.xaml
     /// the board is 10x18
@@ -28,7 +21,7 @@ namespace TetrisProject
     {
         private DispatcherTimer movementDownTimer;
         
-        private bool paused = false;
+        private bool paused = true;
         bool lost = false;
 
         GameBoard board;
@@ -37,27 +30,42 @@ namespace TetrisProject
         {
             InitializeComponent();
             movementDownTimer = new DispatcherTimer();
-            board = new GameBoard(next_block_display);
+            //board = new GameBoard(next_block_display);
 
 
             movementDownTimer.Tick += new EventHandler(downwardTick);
             movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
-            movementDownTimer.Start();
+            //movementDownTimer.Start();
 
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
 
+            Application.Current.Shutdown();
+        }
+        public void lose()
+        {
+            loseLabel.Visibility = Visibility.Visible;
+            board.Lines = 0;
+            board.Level = 0;
+            TIMER_SPEED = 500;
+            lost = true;
+            pause.IsEnabled = false;
+            play.IsEnabled = false;
+            
+            movementDownTimer.Stop();
+            
+            
+        }
         private void downwardTick(object sender, EventArgs e)
         {
 
+            
             if (board.checkBlockCollisionDown() && board.CurrBlock.Y < 0)
-            {
-                lost = true;
-                board.lose();
-                TIMER_SPEED = 500;
-                level_text.Text = "LOST";
-                movementDownTimer.Stop();
-            }
+                lose();   
+            
             else if(board.checkBlockCollisionDown())
             {               
                 board.checkForLineDeleteAndMove();
@@ -74,6 +82,7 @@ namespace TetrisProject
 
                 lines_text.Text = board.Lines + "";
                 score_text.Text = board.Score + "";
+                high_score_text.Text = board.HighScore + "";
 
             }
             else
@@ -81,6 +90,7 @@ namespace TetrisProject
                 board.CurrBlock.Y++;
                 board.moveBlock();
             }
+
             board.drawField(play_area);
         }
 
@@ -97,7 +107,7 @@ namespace TetrisProject
                 Save.IsEnabled = true;
                 
                 load.IsEnabled = true;
-                pause_button.Content = "Resume";
+                pauseBox.Text = "Game is Paused";
                 
                 
 
@@ -109,71 +119,76 @@ namespace TetrisProject
                 pause.IsEnabled = true;
                 Save.IsEnabled = false;
                 load.IsEnabled = false;
-                pause_button.Content = "Pause";
+                pauseBox.Text = "Game is Running";
             }
 
         }
 
         private void play_area_KeyDown(object sender, KeyEventArgs e)
         {
-            
-            int pWidth = board.CurrBlock.checkWidth();
-            if (board.CurrBlock.Y == 14)
+            if (board != null)
             {
-                return;
-            }
-            #region left and right movement
-            else if (e.Key == Key.Left && board.checkBlockCollisionToLeft() == false && board.CurrBlock.X != 0 && !lost)
-            {
-                board.CurrBlock.X--;
-                board.moveBlock();
-                deleteTrailIfMovingLeft();
-            }
-            else if (e.Key == Key.Right && board.checkBlockCollisionToRight() == false && board.CurrBlock.X + pWidth != 10 && !lost)
-            {
-
-                board.CurrBlock.X++;
-                board.moveBlock();
-                deleteTrailIfMovingRight();
-            }
-
-            #endregion
-            else if (e.Key == Key.Space)
-            {
-                while (board.checkBlockCollisionDown() == false)
+                int pWidth = board.CurrBlock.checkWidth();
+                if (board.CurrBlock.Y == 14)
                 {
-                    board.CurrBlock.Y++;
-                    board.moveBlock();
+                    return;
                 }
-            }
-            else if (e.Key == Key.Home)
-            {
-                board.levelUp();
-                TIMER_SPEED = (int)(TIMER_SPEED * .75);
-                movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
-                level_text.Text = board.Level + "";
-            }
+                #region left and right movement
+                else if (e.Key == Key.Left && board.checkBlockCollisionToLeft() == false && board.CurrBlock.X != 0 && !lost && !paused)
+                {
+                    board.CurrBlock.X--;
+                    board.moveBlock();
+                    deleteTrailIfMovingLeft();
+                }
+                else if (e.Key == Key.Right && board.checkBlockCollisionToRight() == false && board.CurrBlock.X + pWidth != 10 && !lost && !paused)
+                {
 
-            #region rotational movement
-            else if (e.Key == Key.Up)
-            {
-                //if (board.CurrBlock.Y >= 0)
-                //{
-                    board.rotateBlock(1);
+                    board.CurrBlock.X++;
+                    board.moveBlock();
+                    deleteTrailIfMovingRight();
+                }
+
+                #endregion
+                else if (e.Key == Key.Space && !paused)
+                {
+                    while (board.checkBlockCollisionDown() == false)
+                    {
+                        board.CurrBlock.Y++;
+                        board.moveBlock();
+                    }
+                }
+                else if (e.Key == Key.Home)
+                {
+                    board.levelUp();
+                    TIMER_SPEED = (int)(TIMER_SPEED * .75);
+                    movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
+                    level_text.Text = board.Level + "";
+                }
+
+                #region rotational movement
+                else if (e.Key == Key.Up && !paused)
+                {
+                    //if (board.CurrBlock.Y >= 0)
+                    //{
+                        board.rotateBlock(1);
                     
-                //}
-            }
-            else if (e.Key == Key.Down)
-            {
-                //if (board.CurrBlock.Y >= 0)
-                //{
+                    //}
+                }
+                else if (e.Key == Key.Down && !paused)
+                {
+                    //if (board.CurrBlock.Y >= 0)
+                    //{
 
-                    board.rotateBlock(-1);
-                //}
-            }
-            #endregion
+                        board.rotateBlock(-1);
+                    //}
+                }
+                #endregion
 
-            board.drawField(play_area);
+                board.drawField(play_area);
+
+            }
+            
+            
         }
 
         private void deleteTrailIfMovingRight()
@@ -367,7 +382,7 @@ namespace TetrisProject
                         board.Field[currY + 3, currX + 2] = 0;
                         board.Field[currY + 1, currX + 1] = 0;
                         board.Field[currY + 2, currX + 1] = 0;
-                        board.Field[currY + 0, currX + 1] = 0;
+                        
                     }
                     else if (p == 2)
                     {
@@ -470,24 +485,45 @@ namespace TetrisProject
         }
         private void control_Help_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            pause_Executed(sender, e);
+            Custom_Message_Box w1 = new Custom_Message_Box(
+                "Rules:" + Environment.NewLine +
+                "You must select a new game or load an old one in order to begin laying." + Environment.NewLine +
+                "You must try to position the pieces so they form a complete, unbroken line across the screen." + Environment.NewLine +
+                "The pieces will fall at a constant speed, and you can move them left, right, or rotate them" + Environment.NewLine +
+                "either clockwise or counter - clockwise.Each time a solid line is created the line will disappear" + Environment.NewLine +
+                "and all of the rows above it will be moved down.The more lines you form at once the more points you get." + Environment.NewLine +
+                "Once you have formed 10 lines, the board is cleared and you will level up, increasing the speed" + Environment.NewLine +
+                "at which the pieces fall. The higher the level the more points possible can be achieved." + Environment.NewLine +
+                "You can also save your game, as well as pause it at any time." + Environment.NewLine
+                 + Environment.NewLine +
+                "Controls: " + Environment.NewLine +
+                "Left / Right keys - moves the piece left or right." + Environment.NewLine +
+                "up / down keys - moves the piece clockwise or counter - clockwise." + Environment.NewLine +
+                "cntrl + N - New Game." + Environment.NewLine +
+                "cntrl + P - Pauses the game" + Environment.NewLine +
+                "cntrl + G - Resumes the game" + Environment.NewLine +
+                "Home button -Aa cheat to automatically level up as many times as desired.", "Help and Controls");
+            w1.Show();
+            w1 = null;
         }
         private void new_game_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (newGame.IsEnabled)
             {
+                loseLabel.Visibility = Visibility.Hidden;
                 board = new GameBoard(next_block_display);
                 board.drawField(play_area);
                 movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED = 500);
 
-                pause_button.Content = "Pause";
+                paused = false;
+                pauseBox.Text = "Game is Running";
                 lines_text.Text = "0";
                 level_text.Text = "1";
                 score_text.Text = "0";
                 play.IsEnabled = false;
                 pause.IsEnabled = true;
                 Save.IsEnabled = false;
-                
                 load.IsEnabled = false;
                 movementDownTimer.Start();
             }
@@ -537,7 +573,8 @@ namespace TetrisProject
         }
         private void load_game_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            Custom_Message_Box w1 = new Custom_Message_Box("","");
+            Custom_Message_Box w1;
+            loseLabel.Visibility = Visibility.Hidden;
             if (load.IsEnabled)
             {
                 try
@@ -550,18 +587,24 @@ namespace TetrisProject
                     }
                     //open the file
                     StreamReader file = new StreamReader("Tetris.txt");
+                    
                     //load old high score
                     high_score_text.Text = file.ReadLine();
+                    board.HighScore = Int32.Parse(high_score_text.Text);
+
+                    //load old completed lines
                     lines_text.Text = file.ReadLine();
                     board.Lines = Int32.Parse(lines_text.Text);
 
+                    //load old score
                     score_text.Text = file.ReadLine();
                     board.Score = Int32.Parse(score_text.Text);
 
+                    //load level
                     level_text.Text = file.ReadLine();
                     board.Level = Int32.Parse(level_text.Text);
-
-                    TIMER_SPEED = (int)(500 * .75 * board.Level);
+                    TIMER_SPEED = (int)(500 * Math.Pow(.75, board.Level -1));
+                    movementDownTimer.Interval = new TimeSpan(0, 0, 0, 0, TIMER_SPEED);
 
                     //fill in the board
                     for (int y = 0; y < 18; y++)
@@ -582,14 +625,15 @@ namespace TetrisProject
                     }
                     file.Close();
 
-                    board.moveToNextPeice();
+                    //board.moveToNextPeice();
                     Random rand = new Random();
                     board.NextBlock = new Block(rand.Next(1, 7));
-
+                    board.moveToNextPeice();
                     w1 = new Custom_Message_Box("game loaded", "Load");
                     w1.Show();
 
                     board.drawField(play_area);
+                    board.displayNextPiece(next_block_display);
                 }
                 catch
                 {
@@ -600,6 +644,11 @@ namespace TetrisProject
         }
 
         #endregion
+
+        private void Exit_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 
     public class GameBoard
@@ -607,6 +656,7 @@ namespace TetrisProject
         protected int level;
         protected int[,] field;
         protected int score;
+        private int highScore;
         protected int lines;
         private Block nextBlock;
         protected Block currentBlock;
@@ -690,6 +740,19 @@ namespace TetrisProject
                 nextBlock = value;
             }
         }
+
+        public int HighScore
+        {
+            get
+            {
+                return highScore;
+            }
+
+            set
+            {
+                highScore = value;
+            }
+        }
         #endregion
 
         public GameBoard(Canvas c)
@@ -707,12 +770,17 @@ namespace TetrisProject
         {
             Random rand = new Random();
             int num = rand.Next(1, 8);
-
+            
             Block newBlock = new Block(num);
-            if (num == 1)
-                newBlock.Y = -3;
-            else
-                newBlock.Y = -2;
+            int rotation = rand.Next(0, 4);
+            for (int i = 0; i < rotation; i++)
+                newBlock.Rotate(1);
+            int height = newBlock.checkHeight();
+            newBlock.Y = -4 + height;
+            //if (num == 1)
+            //    newBlock.Y = -3;
+            //else
+            //    newBlock.Y = -2;
 
             newBlock.X = rand.Next(1, 10 - newBlock.checkWidth());
             
@@ -1113,12 +1181,19 @@ namespace TetrisProject
                     }
                 }
             }
-            if(lineAmount > 0)
+            if (lineAmount > 0)
+            {
                 score += ((100 * lineAmount) + (50 * (lineAmount - 1))) * level;
+                if (score > highScore)
+                {
+                    highScore = score;
+                }
+            }
         }
 
         public void displayNextPiece(Canvas next_block_display)
         {
+            next_block_display.Children.Clear();
             for (int y = 0; y < 4; y++)
             {
                 for (int x = 0; x < 4; x++)
@@ -1177,18 +1252,6 @@ namespace TetrisProject
             level++;
 
         }
-        public void lose()
-        {
-            //clear field
-            for (int y = 0; y < 18; y++)
-            {
-                for (int x = 0; x < 10; x++)
-                {
-                    field[y, x] = 0;
-                }
-            }
-            Lines = 0;
-            level = 0;
-        }
+        
     }
 }
