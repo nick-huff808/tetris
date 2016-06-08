@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisProject"
         mc:Ignorable="d"
-        Title="Window1" Height="450" Width="450" Icon ="tetris_logo.ico">
+        Title="Window1" Height="450" Width="750" Icon ="tetris_logo.ico">
     <Grid>
-        <Label x:Name="label" Content="Label" HorizontalAlignment="Center" Margin="10,10,10.2,0" VerticalAlignment="Top" Height="402" Width="423"/>
+        <Label x:Name="label" Content="Label" HorizontalAlignment="Center" Margin="10,0,-18,0" VerticalAlignment="Top" Height="402" Width="750"/>
 
     </Grid>
 </Window>
