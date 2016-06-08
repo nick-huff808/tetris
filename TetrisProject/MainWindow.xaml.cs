@@ -14,8 +14,10 @@ using System.Windows.Threading;
 namespace TetrisProject
 {
     /// <summary>
-    /// TODO: try solve mem leak (move shit out the tick)
     /// Todo: add keyboard short cuts
+    /// Todo: implement high score
+    /// fix losing/winning/leveling up
+    /// blocks enter at random rotation
     /// 
     /// Interaction logic for MainWindow.xaml
     /// the board is 10x18
@@ -711,7 +713,8 @@ namespace TetrisProject
                 newBlock.Y = -3;
             else
                 newBlock.Y = -2;
-            newBlock.X = 4;
+
+            newBlock.X = rand.Next(1, 10 - newBlock.checkWidth());
             
             return newBlock;
         }
@@ -719,7 +722,7 @@ namespace TetrisProject
         {
             int id = i % 10;
 
-            if(id == 1)
+            if (id == 1)
             {
                 return Colors.Blue;
             }
@@ -750,40 +753,39 @@ namespace TetrisProject
             else
                 return Color.FromRgb(116, 61, 61);
         }
-
+        
         public void drawField(Canvas play_area)
         {
             if (CurrBlock.Y < 0)
             {
                 drawPieceOnCoords(CurrBlock.X, CurrBlock.Y);
             }
-            
-                for (int y = 0; y < 18; y++)
+            play_area.Children.Clear();
+            for (int y = 0; y < 18; y++)
                 {
                     for (int x = 0; x < 10; x++)
                     {
 
+                    Rectangle square = new Rectangle();
+                    square.Width = 20;
+                    square.Height = 20;
 
-                        Color color = colorPick(field[y, x]);
-
-                        //Taken from a stack overflow forum
-                        Rectangle square = new Rectangle();
-                        if (field[y, x] != 0)
-                        {
-                            square.Stroke = new SolidColorBrush(Colors.White);
-                            square.StrokeThickness = 1;
-                        }
-
-                        square.Fill = new SolidColorBrush(color);
-                        square.Width = 20;
-                        square.Height = 20;
-                        Canvas.SetLeft(square, x * 20);
-                        Canvas.SetTop(square, y * 20);
-                        play_area.Children.Add(square);
-
+                    //Taken from a stack overflow forum
+                    if (field[y, x] != 0)
+                    {
+                        square.Stroke = new SolidColorBrush(Colors.White);
+                        square.StrokeThickness = 1;
                     }
+
+                    square.Fill = new SolidColorBrush(colorPick(field[y, x]));
+
+                    Canvas.SetLeft(square, x * 20);
+                    Canvas.SetTop(square, y * 20);
+                    play_area.Children.Add(square);
+                    
                 }
-            
+                }  
+                    
             
         }
         
@@ -807,83 +809,6 @@ namespace TetrisProject
                 deleteTrailRotate();
             }
 
-            #region old
-            /*
-            if (CurrBlock.Id == 1)
-            {
-
-                if (CurrBlock.Pos % 2 == 0)
-                {
-
-                    for (int x = CurrBlock.X; x < CurrBlock.X + 4; x++)
-                    {
-                        if (field[CurrBlock.Y + 2, x] < 10)
-                            field[CurrBlock.Y + 2, x] = 0;
-                    }
-                }
-                else
-                {
-                    if (field[CurrBlock.Y - 1, 0] < 10)
-                        field[CurrBlock.Y - 1, 0] = 0;
-                }
-            }
-
-        
-            else if (CurrBlock.Id == 2 && currentBlock.Pos == 0)
-            {
-                if (field[CurrBlock.Y + 1, CurrBlock.X] < 10)
-                    field[CurrBlock.Y + 1, CurrBlock.X] = 0;
-                for (int x = CurrBlock.X + 1; x < CurrBlock.X + 3; x++)
-                {
-                    if (field[CurrBlock.Y + 2, x] < 10)
-                        field[CurrBlock.Y + 2, x] = 0;
-                }
-            }
-            else if (CurrBlock.Id == 3 && currentBlock.Pos == 0)
-            {
-                for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
-                {
-                    if (field[CurrBlock.Y + 1, x] < 10)
-                        field[CurrBlock.Y + 1, x] = 0;
-                }
-            }
-            else if (CurrBlock.Id == 4 && currentBlock.Pos == 0)
-            {
-                if (field[CurrBlock.Y + 2, CurrBlock.X] < 10)
-                    field[CurrBlock.Y + 2, CurrBlock.X] = 0;
-                for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
-                {
-                    if (field[CurrBlock.Y + 1, x] < 10)
-                        field[CurrBlock.Y + 1, x] = 0;
-                }
-            }
-            else if (CurrBlock.Id == 5 && currentBlock.Pos == 0)
-            {
-                if (field[CurrBlock.Y + 2, CurrBlock.X + 2] < 10)
-                    field[CurrBlock.Y + 2, CurrBlock.X + 2] = 0;
-                for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
-                {
-                    if (field[CurrBlock.Y + 1, x] < 10)
-                        field[CurrBlock.Y + 1, x] = 0;
-                }
-            }
-            else if (CurrBlock.Id == 6 && currentBlock.Pos == 0)
-            {
-                for (int x = CurrBlock.X; x < CurrBlock.X + 2; x++)
-                {
-                    if (field[CurrBlock.Y + 1, x] < 10)
-                        field[CurrBlock.Y + 1, x] = 0;
-                }
-            }
-            else if (CurrBlock.Id == 7 && currentBlock.Pos == 0)
-            {
-                for (int x = CurrBlock.X; x < CurrBlock.X + 3; x++)
-                {
-                    if (field[CurrBlock.Y + 1, x] < 10)
-                        field[CurrBlock.Y + 1, x] = 0;
-                }
-            }*/
-            #endregion
         }
         private void deleteTrailRotate()
         {
@@ -939,22 +864,22 @@ namespace TetrisProject
             }
             else if (id == 2)
             {
-                if (pos == 0)
+                if (newPostion == 0)
                 {
                     if (field[y + 2, x + 0] > 10 || field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10 || field[y + 3, x + 2] > 10)
                         canRotate = false;
                 }
-                else if (pos == 1)
+                else if (newPostion == 1)
                 {
                     if (field[y + 3, x + 0] > 10 || field[y + 2, x + 0] > 10 || field[y + 1, x + 0] > 10 || field[y + 1, x + 1] > 10)
                         canRotate = false;
                 }
-                else if (pos == 2)
+                else if (newPostion == 2)
                 {
                     if (field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 2, x + 2] > 10 || field[y + 3, x + 2] > 10)
                         canRotate = false;
                 }
-                else if (pos == 3)
+                else if (newPostion == 3)
                 {
                     if (field[y + 3, x + 0] > 10 || field[y + 1, x + 1] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10)
                         canRotate = false;
@@ -963,22 +888,22 @@ namespace TetrisProject
             }
             else if (id == 3)
             {
-                if (pos == 0)
+                if (newPostion == 0)
                 {
                     if (field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 2, x + 2] > 10 || field[y + 3, x + 0] > 10)
                         canRotate = false;
                 }
-                else if (pos == 1)
+                else if (newPostion == 1)
                 {
                     if (field[y + 1, x + 0] > 10 || field[y + 2, x + 0] > 10 || field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10)
                         canRotate = false;
                 }
-                else if (pos == 2)
+                else if (newPostion == 2)
                 {
                     if (field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10 || field[y + 3, x + 2] > 10 || field[y + 2, x + 2] > 10)
                         canRotate = false;
                 }
-                else if (pos == 3)
+                else if (newPostion == 3)
                 {
                     if (field[y + 1, x + 0] > 10 || field[y + 1, x + 1] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10)
                         canRotate = false;
@@ -988,7 +913,7 @@ namespace TetrisProject
             }
             else if (id == 4)
             {
-                if (pos % 2 == 0)
+                if (newPostion % 2 == 0)
                 {
                     if (field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10 || field[y + 2, x + 1] > 10 || field[y + 2, x + 2] > 10)
                         canRotate = false;
@@ -1001,7 +926,7 @@ namespace TetrisProject
             }
             else if (id == 5)
             {
-                if (pos % 2 == 0)
+                if (newPostion % 2 == 0)
                 {
                     if (field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10 || field[y + 3, x + 2] > 10)
                         canRotate = false;
@@ -1016,22 +941,22 @@ namespace TetrisProject
                 return false;
             else if (id == 7)
             {
-                if (pos == 0)
+                if (newPostion == 0)
                 {
                     if (field[y + 2, x + 0] > 10 || field[y + 2, x + 1] > 10 || field[y + 2, x + 2] > 10 || field[y + 3, x + 1] > 10)
                         canRotate = false;
                 }
-                else if (pos == 1)
+                else if (newPostion == 1)
                 {
                     if (field[y + 1, x + 0] > 10 || field[y + 2, x + 0] > 10 || field[y + 3, x + 0] > 10 || field[y + 2, x + 1] > 10)
                         canRotate = false;
                 }
-                else if (pos == 2)
+                else if (newPostion == 2)
                 {
                     if (field[y + 3, x + 0] > 10 || field[y + 3, x + 1] > 10 || field[y + 3, x + 2] > 10 || field[y + 2, x + 1] > 10)
                         canRotate = false;
                 }
-                else if (pos == 3)
+                else if (newPostion == 3)
                 {
                     if (field[y + 2, x + 0] > 10 || field[y + 1, x + 1] > 10 || field[y + 2, x + 1] > 10 || field[y + 3, x + 1] > 10)
                         canRotate = false;
@@ -1198,7 +1123,7 @@ namespace TetrisProject
             {
                 for (int x = 0; x < 4; x++)
                 {
-                    Color color = GameBoard.colorPick(this.nextBlock.Shape[y][x]);
+                    Color color = colorPick(this.nextBlock.Shape[y][x]);
 
                     //Taken from a stack overflow forum
                     Rectangle square = new Rectangle();
